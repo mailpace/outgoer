@@ -1,7 +1,7 @@
 {
-  "name": "node-typescript-boilerplate",
-  "version": "0.0.0",
-  "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
+  "name": "Outgoer",
+  "version": "0.0.1",
+  "description": "A modern SMTP proxy for sending outgoing emails",
   "type": "module",
   "engines": {
     "node": ">= 18.12 <19"
@@ -9,12 +9,14 @@
   "devDependencies": {
     "@types/jest": "~29.5",
     "@types/node": "~18",
+    "@types/smtp-server": "^3.5.7",
     "@typescript-eslint/eslint-plugin": "~5.59",
     "@typescript-eslint/parser": "~5.59",
     "eslint": "~8.38",
     "eslint-config-prettier": "~8.8",
     "eslint-plugin-jest": "~27.2",
     "jest": "~29.5",
+    "jest-mock-extended": "^3.0.4",
     "prettier": "~2.8",
     "rimraf": "~5.0",
     "ts-api-utils": "~0.0.44",
@@ -33,9 +35,11 @@
     "prettier": "prettier --config .prettierrc --write .",
     "test:watch": "jest --watch"
   },
-  "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
+  "author": "Paul Oms <paul@mailpace.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "bullmq": "^3.12.0",
+    "smtp-server": "~3.11.0",
     "tslib": "~2.5"
   },
   "volta": {
