@@ -18,18 +18,16 @@ export async function handleStream(
   session: SMTPServerSession,
   callback: (
     err: Error | null | undefined,
-    response?: SMTPServerAuthenticationResponse
+    response?: SMTPServerAuthenticationResponse | string
   ) => void
 ) {
 
   stream.on('end', () => {
-    console.log("stream ending")
-
     if (stream.sizeExceeded) {
       const err = new Error(`Message exceeds fixed maximum message size. Session id: ${session.id}`);
       return callback(err);
     }
   });
 
-  return callback(null);
+  return callback(null, "Message queued");
 }

@@ -10,10 +10,6 @@ const options = {
   ...config[env].default(),
 };
 
-export const start = () => {
-  const server = new SMTPServer(options);
-  server.on('error', handleError);
-  server.listen('2525', options.serverHost);
-}
-
-start();
+export const server = new SMTPServer(options);
+server.on('error', handleError);
+server.listen('2525', options.serverHost);
