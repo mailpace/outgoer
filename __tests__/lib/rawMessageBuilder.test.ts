@@ -27,4 +27,14 @@ describe('convert stream to rfc string', () => {
 
     expect(raw.length).toEqual(247);
   });
+
+  test('should reject with error on stream error', async () => {
+    const stream = new PassThrough();
+    const errorMessage = 'Intentional error';
+    process.nextTick(() => {
+      stream.emit('error', new Error(errorMessage));
+    });
+
+    await expect(streamToRaw(stream)).rejects.toThrow(errorMessage);
+  });
 });

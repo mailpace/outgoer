@@ -1,7 +1,7 @@
 import { SMTPServer } from 'smtp-server';
 
 import config from './config/index.js';
-import { handleError } from './lib/onError.js';
+import { handleError } from './hooks/onError.js';
 
 const env = process.env.NODE_ENV || 'development';
 

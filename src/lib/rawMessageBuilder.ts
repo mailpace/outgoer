@@ -1,6 +1,6 @@
 import { PassThrough } from 'stream';
 
-import { handleError } from './onError.js';
+import { handleError } from '../hooks/onError.js';
 
 export async function streamToRaw(stream: PassThrough): Promise<string> {
   let result = '';

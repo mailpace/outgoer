@@ -1,4 +1,4 @@
-import { handleError } from '../../src/lib/onError.js';
+import { handleError } from '../../src/hooks/onError.js';
 
 test('handleError logs error name and message', async () => {
   const error = new Error('Test error');

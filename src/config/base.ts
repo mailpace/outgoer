@@ -1,5 +1,5 @@
 // import { authenticate } from '../lib/onAuth';
-import { handleStream } from '../lib/onData.js';
+import { handleStream } from '../hooks/onData.js';
 
 // Config should also be stored in:
 // - env vars

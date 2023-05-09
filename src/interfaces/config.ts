@@ -63,5 +63,5 @@ export interface EmailConfiguration {
   /**
    * Endpoint for grafana metrics
    */
-  metricsEndpoint: String;
+  metricsEndpoint: string;
 }

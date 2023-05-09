@@ -1,7 +1,7 @@
 import { mock } from 'jest-mock-extended';
 import nodemailer from 'nodemailer';
 import { SMTPServerDataStream, SMTPServerSession } from 'smtp-server';
-import { handleStream } from '../../src/lib/onData.js';
+import { handleStream } from '../../src/hooks/onData.js';
 import { Readable } from 'stream';
 
 
