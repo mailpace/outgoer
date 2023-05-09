@@ -1,8 +1,11 @@
+import { ParsedMail, simpleParser, SimpleParserOptions } from 'mailparser';
 import {
   SMTPServerAuthenticationResponse,
   SMTPServerDataStream,
   SMTPServerSession,
 } from 'smtp-server';
+
+import { streamToRaw } from './rawMessageBuilder.js';
 
 /**
  * Process stream from SMTP Server
@@ -21,6 +24,27 @@ export async function handleStream(
     response?: SMTPServerAuthenticationResponse | string
   ) => void
 ) {
+  
+  const raw = await streamToRaw(stream).catch((error: Error) => {
+    callback(error);
+    return raw;
+  });
+  
+  // Options are set to preserve the original email where possible
+  const options: SimpleParserOptions = {
+    skipHtmlToText: true,
+    maxHtmlLengthToParse: 10 * 1024 * 1024, // 15 MB TODO: make configurable
+    skipImageLinks: true,
+    skipTextToHtml: true,
+    skipTextLinks: true,
+  };
+
+  const parsed: ParsedMail = await simpleParser(raw, options).catch(
+    (error: Error) => {
+      callback(error);
+      return parsed;
+    }
+  );
 
   stream.on('end', () => {
     if (stream.sizeExceeded) {
