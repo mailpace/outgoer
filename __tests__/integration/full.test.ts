@@ -1,8 +1,9 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+import treeKill from 'tree-kill';
 import { SMTPServer } from 'smtp-server';
 import nodemailer from 'nodemailer';
 
-describe('SMTP Server Integration Test', () => {
+describe('Outgoer Integration Test', () => {
   let smtpServer: SMTPServer;
   let child: ChildProcessWithoutNullStreams;
   const outgoerPort = 2525;
@@ -18,6 +19,7 @@ describe('SMTP Server Integration Test', () => {
       },
     });
 
+    // Wait for it to work
     await new Promise<void>((resolve) => {
       child.stdout.on('data', (data: any) => {
         if (data.toString().includes(`listening on 127.0.0.1`)) {
@@ -29,15 +31,9 @@ describe('SMTP Server Integration Test', () => {
     // Create an instance of the SMTP server (the forwarding target)
     smtpServer = new SMTPServer({
       authOptional: true,
-      onData(stream, _session, callback) {
-        const chunks: any[] = [];
-        stream.on('data', (chunk) => chunks.push(chunk));
-        stream.on('end', () => {
-          const message = Buffer.concat(chunks).toString();
-          console.log(message);
-          callback();
-        });
-      },
+      onData: jest.fn((_stream, _session, callback) => {
+        callback();
+      })
     });
 
     // Start the SMTP server
@@ -45,14 +41,14 @@ describe('SMTP Server Integration Test', () => {
   });
 
   afterAll(async () => {
-    // Stop the SMTP server Outgoer
+    // Stop the SMTP server and Outgoer
     smtpServer.close();
-
-    // THIS ISN"T WORKING, SO THE PROCESS STAYS UP FOREVER, WHICH MEANS SUBSEQUENT TEST RUNS FAIL
-    child.kill();
+    if (child && child.pid) {
+      treeKill(child.pid);
+    }
   });
 
-  it('forwards an email to another SMTP server', async () => {
+  it('forwards an email to another server', async () => {
     // Create a test email
     const transporter = nodemailer.createTransport({
       port: outgoerPort,
@@ -65,5 +61,8 @@ describe('SMTP Server Integration Test', () => {
       text: 'This is a test email.',
     });
     expect(info.accepted).toContain('forward@example.com');
+
+    // TODO: Assert added to redis/bullmq - is this even possible from here?
+    // TODO once SMTP provider working: expect(smtpServer.onData).toHaveBeenCalled();
   });
 });
