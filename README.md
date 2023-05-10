@@ -2,6 +2,8 @@
 
 Outgoer is a modern SMTP proxy for sending outgoing emails. It routes email from your apps to 3rd party email providers, helping to maximize delivery rates, centralize provider management, and simplify sending email.
 
+![Build](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml/badge.svg)
+
 ## Drop Outgoer into your stack to 
 
 - Scale and track sending email from multiple apps & containers
