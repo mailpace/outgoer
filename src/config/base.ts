@@ -11,7 +11,7 @@ export default {
   secure: false,
   serverHost: 'localhost',
   authMethods: ['PLAIN', 'LOGIN'],
-  authOptional: false,
+  authOptional: true,
   // onAuth: authenticate,
   onData: handleStream,
   size: 30 * 1024 * 1024, // 30 MB default limit
