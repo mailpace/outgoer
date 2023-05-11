@@ -10,7 +10,7 @@ export const emailConfig: EmailConfiguration = config.util.toObject();
 const defaultOutgoerSmtpSettings = {
   name: 'smtp.outgoer',
   secure: false,
-  serverHost: 'localhost',
+  serverHost: '127.0.0.1',
   authMethods: ['PLAIN', 'LOGIN'],
   authOptional: true,
   onData: handleStream,
