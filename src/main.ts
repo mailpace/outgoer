@@ -6,18 +6,11 @@ import { initializeMetrics } from './lib/metrics.js';
 import { startMetricsEndpoint } from './lib/routes.js';
 import { handleError } from './hooks/onError.js';
 
-const env = process.env.NODE_ENV || 'development';
+logger.info("Launching Outgoer SMTP server and HTTP Endpoint...")
 
-const options = {
-  ...config.base.default,
-  ...config[env].default(),
-};
-
-logger.info("Launching...")
-
-export const server = new SMTPServer(options);
+export const server = new SMTPServer(config.outgoerSmtpServer);
 server.on('error', handleError);
-server.listen('2525', options.serverHost);
+server.listen(config.outgoerSmtpServer.port, config.outgoerSmtpServer.serverHost);
 
 initializeMetrics();
 startMetricsEndpoint();

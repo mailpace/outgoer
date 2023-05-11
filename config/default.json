@@ -1,0 +1,45 @@
+{
+  "outgoerSmtpServer": {
+    "name": "Outgoer SMTP Server",
+    "serverHost": "outgoer.smtp",
+    "port": 2525,
+    "size": 5242880,
+    "key": null,
+    "cert": null,
+    "ca": null
+  },
+  "metrics": {
+    "path": "/metrics",
+    "port": 8080
+  },
+  "smtpServers": [
+    {
+      "host": "smtp.gmail.com",
+      "port": 465,
+      "secure": true,
+      "auth": {
+        "user": "your-email@gmail.com",
+        "pass": "your-email-password"
+      },
+      "priority": 1
+    }
+  ],
+  "emailProviders": [
+    {
+      "name": "Google Workspace",
+      "smtpServerIndex": 0,
+      "fromEmail": "your-email@your-domain.com",
+      "priority": 1
+    }
+  ],
+  "modifiers": [
+    {
+      "name": "Add Tracking Pixel"
+    }
+  ],
+  "routes": [
+    {
+      "name": "Marketing Emails"
+    }
+  ]
+}
