@@ -1,4 +1,5 @@
 import express from 'express';
+import { logger } from '../lib/logger.js';
 import { getMetricsRegistry } from './metrics.js';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 
@@ -12,6 +13,6 @@ export function startMetricsEndpoint(): Server<typeof IncomingMessage, typeof Se
   });
 
   return app.listen(port, () => {
-    console.log(`Metrics endpoint is listening on port ${port}`);
+    logger.info(`Outgoer metrics endpoint available on port ${port}`);
   });
 }

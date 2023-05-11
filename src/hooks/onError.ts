@@ -1,4 +1,6 @@
+import { logger } from '../lib/logger.js';
+
 export async function handleError(err: Error | undefined) {
     const error = err ?? { name: 'Undefined', message: 'undefined' };
-    console.log('Error Name: %s, Message: %s', error.name, error.message);
+    logger.error('Error Name: %s, Message: %s', error.name, error.message);
 }

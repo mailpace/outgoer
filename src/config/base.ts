@@ -1,5 +1,6 @@
 // import { authenticate } from '../lib/onAuth';
 import { handleStream } from '../hooks/onData.js';
+import { logger } from '../lib/logger.js';
 
 // Config should also be stored in:
 // - env vars
@@ -14,5 +15,6 @@ export default {
   authOptional: true,
   // onAuth: authenticate,
   onData: handleStream,
-  size: 30 * 1024 * 1024, // 30 MB default limit
+  size: 30 * 1024 * 1024, // 30 MB default limit,
+  logger,
 };

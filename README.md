@@ -30,7 +30,13 @@ Outgoer is simple to setup, lives entirely inside your network, and speaks the s
 
 # Installation
 
-- ...
+- `docker pull mailpace/outgoer:v1`
+- `docker run -p 8080:8080 --env CONFIG_VAR="abc" mailpace/outgoer:v1`
+
+
+# Configuration
+
+See examples/configuration for example configurations.
 
 
 # 

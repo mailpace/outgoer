@@ -1,4 +1,5 @@
 import { SMTPServer } from 'smtp-server';
+import { logger } from './lib/logger.js';
 
 import config from './config/index.js';
 import { initializeMetrics } from './lib/metrics.js';
@@ -11,6 +12,8 @@ const options = {
   ...config.base.default,
   ...config[env].default(),
 };
+
+logger.info("Launching...")
 
 export const server = new SMTPServer(options);
 server.on('error', handleError);
