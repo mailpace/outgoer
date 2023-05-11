@@ -17,7 +17,7 @@ export function initializeMetrics() {
 }
 
 // Function to increment the emails sent counter
-export function incrementEmailsSent(status: string = 'success') {
+export function incrementEmailsSent(status = 'success') {
   emailsSentCounter.inc({ status });
 }
 

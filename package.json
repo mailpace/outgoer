@@ -38,6 +38,7 @@
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "build:start": "tsc -p tsconfig.json && node build/src/main.js",
     "lint": "eslint . --ext .ts --ext .mts",
+    "lint:fix": "eslint . --ext .ts --ext .mts --fix",
     "test": "jest --coverage",
     "test:integration": "jest __tests__/integration/**.test.ts --detectOpenHandles",
     "prettier": "prettier --config .prettierrc --write .",
