@@ -12,6 +12,7 @@ describe('Metrics Module', () => {
   it('should increment the emails sent counter', async () => {
     incrementEmailsSent('failure');
     incrementEmailsSent('success');
+    incrementEmailsSent();
 
     const registry = getMetricsRegistry();
     const metrics = await registry.getMetricsAsJSON();
@@ -24,7 +25,7 @@ describe('Metrics Module', () => {
     const failureValue = counterMetric.values.find((value: any) => value.labels.status === 'failure');
 
     expect(successValue).toBeDefined();
-    expect(successValue.value).toBe(1);
+    expect(successValue.value).toBe(2);
 
     expect(failureValue).toBeDefined();
     expect(failureValue.value).toBe(1);

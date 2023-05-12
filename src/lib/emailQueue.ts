@@ -1,21 +1,20 @@
 import { Queue } from 'bullmq';
-import { AddressObject } from 'mailparser';
+import { logger } from './logger.js';
+import { EmailJobData, EmailMetadata } from '../interfaces/email.js';
 
-interface EmailMetadata {
-  to: AddressObject | AddressObject[];
-  from: AddressObject;
-  subject: string;
+export const SEND_QUEUE_NAME = 'send_email_queue';
+
+let queue: Queue<EmailJobData>;
+
+export function initializeQueue() {
+  queue = new Queue(SEND_QUEUE_NAME);
+  logger.info(`${SEND_QUEUE_NAME} queue initialized`)
 }
 
-interface EmailJobData {
-  rawEmail: string;
-  metadata: EmailMetadata;
-}
-
-const SEND_QUEUE_NAME = 'send_queue';
-
-export const enqueueEmail = async (rawEmail: string, metadata: EmailMetadata) => {
-  const emailJobData: EmailJobData = { rawEmail, metadata };
-  const queue = new Queue<EmailJobData>(SEND_QUEUE_NAME);
+export const enqueueEmail = async (
+  raw: string,
+  metadata: EmailMetadata,
+) => {
+  const emailJobData: EmailJobData = { raw, metadata };
   await queue.add('send_email', emailJobData);
 };

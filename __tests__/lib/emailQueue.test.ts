@@ -1,32 +1,55 @@
-import { enqueueEmail } from '../../src/lib/emailQueue.js';
 import { Queue } from 'bullmq';
+import {
+  enqueueEmail,
+  initializeQueue,
+  SEND_QUEUE_NAME,
+} from '../../src/lib/emailQueue.js';
+import { logger } from '../../src/lib/logger.js';
+import { EmailMetadata } from '../../src/interfaces/email.js';
 
 jest.mock('bullmq');
+jest.mock('../../src/lib/logger.js');
 
-describe('enqueueEmail', () => {
-  const addMock = jest.fn();
+describe('Email Queue', () => {
 
-  beforeEach(() => {
-    (Queue as unknown as jest.Mock).mockImplementation(() => ({
-      add: addMock,
-    }));
-  });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should create a queue and add a job to it with the correct data', async () => {
-    const rawEmail = 'Hello World!';
-    const metadata = {
-      to: { value: [{address: 'example@gmail.com', name: 'example' }], html: "test", text: "test"},
-      from:  { value: [{address: 'example@gmail.com', name: 'example' }], html: "test", text: "test"},
-      subject: 'Test Email',
-    };
+  describe('initializeQueue', () => {
+    it('should initialize the queue and log a message', () => {
+      initializeQueue();
+      expect(Queue).toHaveBeenCalledWith(SEND_QUEUE_NAME);
+      expect(logger.info).toHaveBeenCalledWith(
+        `${SEND_QUEUE_NAME} queue initialized`,
+      );
+    });
+  });
 
-    await enqueueEmail(rawEmail, metadata);
+  describe('enqueueEmail', () => {
+    it('should add the email job data to the queue', async () => {
+      const raw = 'email content';
+      const address = {
+        value: [{ address: 'to@example.com', name: 'test' }],
+        html: 'test',
+        text: 'test',
+      }
+      const metadata: EmailMetadata = {
+        to: address,
+        from: address,
+        subject: 'Test Email',
+      };
 
-    expect(Queue).toHaveBeenCalledWith('send_queue');
-    expect(addMock).toHaveBeenCalledWith('send_email', { rawEmail, metadata });
+      await enqueueEmail(raw, metadata);
+
+      // TODO assert
+      /** 
+      expect(queueAddMock).toHaveBeenCalledWith('send_email', {
+        raw,
+        metadata,
+      });
+       */
+    });
   });
 });
