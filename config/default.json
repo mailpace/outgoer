@@ -12,24 +12,20 @@
     "path": "/metrics",
     "port": 8080
   },
-  "smtpServers": [
+  "services": [
     {
-      "host": "smtp.gmail.com",
-      "port": 465,
-      "secure": true,
-      "auth": {
-        "user": "your-email@gmail.com",
-        "pass": "your-email-password"
-      },
-      "priority": 1
-    }
-  ],
-  "emailProviders": [
-    {
-      "name": "Google Workspace",
-      "smtpServerIndex": 0,
-      "fromEmail": "your-email@your-domain.com",
-      "priority": 1
+      "type": "smtp",
+      "priority": 0,
+      "limit": 10000,
+      "smtpSettings": {
+        "host": "smtp.gmail.com",
+        "port": 465,
+        "secure": true,
+        "auth": {
+          "user": "your-email@gmail.com",
+          "pass": "your-email-password"
+        }
+      }
     }
   ],
   "modifiers": [

@@ -9,10 +9,10 @@ import { initializeQueue } from './lib/emailQueue.js';
 
 logger.info("Launching Outgoer SMTP server and HTTP Endpoint...")
 
-export const server = new SMTPServer(config.outgoerSmtpServer);
-server.on('error', handleError);
-server.listen(config.outgoerSmtpServer.port, config.outgoerSmtpServer.serverHost);
-
 initializeQueue();
 initializeMetrics();
 startMetricsEndpoint();
+
+export const server = new SMTPServer(config.outgoerSmtpServer);
+server.on('error', handleError);
+server.listen(config.outgoerSmtpServer.port, config.outgoerSmtpServer.serverHost);
