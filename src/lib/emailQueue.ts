@@ -6,15 +6,13 @@ export const SEND_QUEUE_NAME = 'send_email_queue';
 
 let queue: Queue<EmailJobData>;
 
-export function initializeQueue() {
+export function initializeQueue(): Queue {
   queue = new Queue(SEND_QUEUE_NAME);
-  logger.info(`${SEND_QUEUE_NAME} queue initialized`)
+  logger.info(`${SEND_QUEUE_NAME} queue initialized`);
+  return queue;
 }
 
-export const enqueueEmail = async (
-  raw: string,
-  metadata: EmailMetadata,
-) => {
+export const enqueueEmail = async (raw: string, metadata: EmailMetadata) => {
   const emailJobData: EmailJobData = { raw, metadata };
-  await queue.add('send_email', emailJobData);
+  await queue.add("send_email", emailJobData);
 };

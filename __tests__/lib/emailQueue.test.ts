@@ -11,15 +11,18 @@ jest.mock('bullmq');
 jest.mock('../../src/lib/logger.js');
 
 describe('Email Queue', () => {
+  let emailQueue: Queue;
 
+  beforeAll(() => {
+    emailQueue = initializeQueue();
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   describe('initializeQueue', () => {
-    it('should initialize the queue and log a message', () => {
-      initializeQueue();
+    it('should have initialized the queue and logged a message', () => {
       expect(Queue).toHaveBeenCalledWith(SEND_QUEUE_NAME);
       expect(logger.info).toHaveBeenCalledWith(
         `${SEND_QUEUE_NAME} queue initialized`,
@@ -43,13 +46,10 @@ describe('Email Queue', () => {
 
       await enqueueEmail(raw, metadata);
 
-      // TODO assert
-      /** 
-      expect(queueAddMock).toHaveBeenCalledWith('send_email', {
+      expect(emailQueue.add).toHaveBeenCalledWith("send_email", {
         raw,
         metadata,
       });
-       */
     });
   });
 });
