@@ -11,17 +11,17 @@ const services = config.services;
 
 // TODO: if the request fails, is too slow, or the limit is hit, how do we select the next priority provider?
 // We need to store that we attempted delivery for this service/email
-
+// TODO: register the worker / get it going?
 
 const worker = new Worker(SEND_QUEUE_NAME, async (job) => {
   if (services) {
+    
+    // Simple priority index
     const sortedServices = services.sort((a, b) => a.priority - b.priority);
     const priority = sortedServices[0]
 
     const transporter = createTransport(priority);
-
     const { raw, metadata }: EmailJobData = job.data;
-
     logger.info(metadata);
 
     try {

@@ -12,10 +12,22 @@ export function startMetricsEndpoint(): Server<typeof IncomingMessage, typeof Se
 
   app.get(`${path}`, (_req, res) => {
     res.set('Content-Type', getMetricsRegistry().contentType);
-    res.send(getMetricsRegistry().metrics());
+    handleMetrics(getMetricsRegistry(), res);
   });
 
   return app.listen(port, () => {
     logger.info(`Outgoer metrics endpoint available at ${path} on port ${port}`);
   });
+}
+
+export function handleMetrics(metricsRegistry, res) {
+  return metricsRegistry.metrics()
+    .then((metrics) => {
+      res.send(metrics);
+
+    })
+    .catch(function () {
+      logger.error('Failed getting Outgoer metrics');
+      res.status(500);
+    });
 }
