@@ -9,4 +9,7 @@ export interface EmailMetadata {
 export interface EmailJobData {
   raw: string;
   metadata: EmailMetadata;
+  state: string;
+  attemptedProviders?: [string];
+  sendAttempts?: number;
 }

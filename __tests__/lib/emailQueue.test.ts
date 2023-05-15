@@ -49,6 +49,7 @@ describe('Email Queue', () => {
       expect(emailQueue.add).toHaveBeenCalledWith("send_email", {
         raw,
         metadata,
+        state: "queued"
       });
     });
   });

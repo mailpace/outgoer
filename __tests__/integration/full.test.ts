@@ -7,6 +7,7 @@ describe('Outgoer Integration Test', () => {
   let smtpServer: SMTPServer;
   let child: ChildProcessWithoutNullStreams;
   const outgoerPort = 2525;
+  const outgoerHost = "127.0.0.1";
   const port = 2526;
 
   beforeAll(async () => {
@@ -51,6 +52,7 @@ describe('Outgoer Integration Test', () => {
   it('forwards an email to another server', async () => {
     // Create a test email
     const transporter = nodemailer.createTransport({
+      host: outgoerHost,
       port: outgoerPort,
       ignoreTLS: true, // necessary for testing with self-signed certificates
     });
