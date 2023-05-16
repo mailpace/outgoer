@@ -33,6 +33,7 @@ export interface EmailConfiguration {
    * Each object includes the host, port, secure, and auth fields.
    */
   services: {
+    name: string,
     type: /** Whether this is vanilla SMTP server or 3rd party library */
       | 'smtp'
       | 'library';
@@ -48,9 +49,7 @@ export interface EmailConfiguration {
         pass: string /** Password for SMTP server authentication */;
       };
     };
-
     // TODO: think the 3rd party providers through
-    providerName: string,
   }[];
 
   redis: {

@@ -16,13 +16,14 @@
   },
   "services": [
     {
+      "name": "smtp test 2",
       "type": "smtp",
       "priority": 0,
       "limit": 10000,
       "smtpSettings": {
-        "host": "smtp.gmail.com",
-        "port": 465,
-        "secure": true,
+        "host": "localhost",
+        "port": 1025,
+        "secure": false,
         "auth": {
           "user": "your-email@gmail.com",
           "pass": "your-email-password"

@@ -10,6 +10,9 @@ export interface EmailJobData {
   raw: string;
   metadata: EmailMetadata;
   state: string;
-  attemptedProviders?: [string];
-  sendAttempts?: number;
+  attemptedProviders?: { [key: string]: AttemptedProvider };
+}
+
+export interface AttemptedProvider {
+  attempts: number;
 }
