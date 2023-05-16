@@ -1,4 +1,4 @@
-import { ParsedMail, simpleParser, SimpleParserOptions } from 'mailparser';
+// import { ParsedMail, simpleParser, SimpleParserOptions } from 'mailparser';
 import {
   SMTPServerAuthenticationResponse,
   SMTPServerDataStream,
@@ -25,32 +25,12 @@ export async function handleStream(
     response?: SMTPServerAuthenticationResponse | string,
   ) => void,
 ) {
-  const raw = await streamToRaw(stream).catch((error: Error) => {
+  const raw: string = await streamToRaw(stream).catch((error: Error) => {
     callback(error);
     return raw;
   });
 
-  // Options are set to preserve the original email where possible
-  const options: SimpleParserOptions = {
-    skipHtmlToText: true,
-    maxHtmlLengthToParse: 10 * 1024 * 1024, // 15 MB TODO: make configurable
-    skipImageLinks: true,
-    skipTextToHtml: true,
-    skipTextLinks: true,
-  };
-
-  const parsed: ParsedMail = await simpleParser(raw, options).catch(
-    (error: Error) => {
-      callback(error);
-      return parsed;
-    },
-  );
-
-  await enqueueEmail(raw, {
-    to: parsed.to,
-    from: parsed.from,
-    subject: parsed.subject,
-  });
+  await enqueueEmail(raw, session.envelope);
 
   stream.on('end', () => {
     if (stream.sizeExceeded) {

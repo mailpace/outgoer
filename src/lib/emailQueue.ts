@@ -1,7 +1,8 @@
 import { Queue } from 'bullmq';
+import { SMTPServerEnvelope } from 'smtp-server';
 import config from '../config/index.js';
 import { logger } from './logger.js';
-import { EmailJobData, EmailMetadata } from '../interfaces/email.js';
+import { EmailJobData } from '../interfaces/email.js';
 
 export const SEND_QUEUE_NAME = 'send_email_queue';
 
@@ -25,7 +26,7 @@ export function initializeQueue(): Queue {
   return queue;
 }
 
-export const enqueueEmail = async (raw: string, metadata: EmailMetadata) => {
-  const emailJobData: EmailJobData = { raw, metadata, state: EmailState.QUEUED };
+export const enqueueEmail = async (raw: string, envelope: SMTPServerEnvelope) => {
+  const emailJobData: EmailJobData = { raw, envelope, state: EmailState.QUEUED };
   await queue.add("send_email", emailJobData);
 };

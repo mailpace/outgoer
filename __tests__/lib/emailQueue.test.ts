@@ -5,7 +5,7 @@ import {
   SEND_QUEUE_NAME,
 } from '../../src/lib/emailQueue.js';
 import { logger } from '../../src/lib/logger.js';
-import { EmailMetadata } from '../../src/interfaces/email.js';
+import { SMTPServerEnvelope } from 'smtp-server';
 
 jest.mock('bullmq');
 jest.mock('../../src/lib/logger.js');
@@ -33,22 +33,23 @@ describe('Email Queue', () => {
   describe('enqueueEmail', () => {
     it('should add the email job data to the queue', async () => {
       const raw = 'email content';
-      const address = {
-        value: [{ address: 'to@example.com', name: 'test' }],
-        html: 'test',
-        text: 'test',
-      }
-      const metadata: EmailMetadata = {
-        to: address,
-        from: address,
-        subject: 'Test Email',
+      const envelope: SMTPServerEnvelope = {
+        mailFrom: {
+          address: 'sender@example.com',
+          args: {}
+        },
+        rcptTo: [
+          {
+            address: 'recipient1@example.com',
+            args: {}
+          }
+        ]
       };
-
-      await enqueueEmail(raw, metadata);
+      await enqueueEmail(raw, envelope);
 
       expect(emailQueue.add).toHaveBeenCalledWith("send_email", {
         raw,
-        metadata,
+        envelope,
         state: "queued"
       });
     });

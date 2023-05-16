@@ -6,6 +6,7 @@ import { EmailJobData } from '../interfaces/email.js';
 import { createTransport } from '../lib/transports/index.js';
 import { EmailConfiguration } from '../interfaces/config.js';
 import selectService from '../lib/selectService.js';
+import convertEnvelope from '../lib/convertEnvelope.js';
 
 const services = config.services;
 type ServiceSettings = EmailConfiguration['services'][number];
@@ -32,6 +33,7 @@ export default function startSenderWorker() {
  * TODO: sending limits per provider (remove the service if limits exceeded)
  * TODO: update states
  * TODO: update metrics
+ * TODO: store the SMTP response in the Job
  * TODO: pass errors back from transport into job
  */
 export async function processEmailJob(job: Job<EmailJobData>) {
@@ -52,8 +54,10 @@ export async function processEmailJob(job: Job<EmailJobData>) {
   const transporter = createTransport(chosenService);
   const raw: string = job.data.raw;
 
+  const envelope = convertEnvelope(job.data.envelope);
+
   try {
-    await transporter.sendMail({ raw });
+    transporter.sendMail({ raw, envelope });
     logger.info(`Email job ${job.id} sent successfully`);
   } catch (error) {
     handleTransporterError(job, error);

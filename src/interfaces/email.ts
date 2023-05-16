@@ -1,14 +1,8 @@
-import { AddressObject } from 'mailparser';
-
-export interface EmailMetadata {
-  to: AddressObject | AddressObject[];
-  from: AddressObject;
-  subject: string;
-}
+import { SMTPServerEnvelope } from 'smtp-server';
 
 export interface EmailJobData {
   raw: string;
-  metadata: EmailMetadata;
+  envelope: SMTPServerEnvelope;
   state: string;
   attemptedProviders?: { [key: string]: AttemptedProvider };
 }
