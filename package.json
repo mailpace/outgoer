@@ -7,6 +7,7 @@
     "node": ">= 18.12 <19"
   },
   "devDependencies": {
+    "@types/bull-arena": "^3.0.7",
     "@types/bunyan": "^1.8.8",
     "@types/config": "^3.3.0",
     "@types/express": "^4.17.17",
@@ -49,6 +50,7 @@
   "author": "Paul Oms <paul@mailpace.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "bull-arena": "^3.30.4",
     "bullmq": "^3.12.0",
     "bunyan": "^1.8.15",
     "config": "^3.3.9",

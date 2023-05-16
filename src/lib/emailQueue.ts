@@ -1,4 +1,5 @@
 import { Queue } from 'bullmq';
+import config from '../config/index.js';
 import { logger } from './logger.js';
 import { EmailJobData, EmailMetadata } from '../interfaces/email.js';
 
@@ -16,11 +17,10 @@ const EmailState = {
   FAILED: 'failed', // No providers left to try, all attempts have failed
 };
 
-
 let queue: Queue<EmailJobData>;
 
 export function initializeQueue(): Queue {
-  queue = new Queue(SEND_QUEUE_NAME);
+  queue = new Queue(SEND_QUEUE_NAME, { connection: config.redis });
   logger.info(`${SEND_QUEUE_NAME} queue initialized`);
   return queue;
 }

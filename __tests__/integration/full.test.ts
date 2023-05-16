@@ -20,6 +20,9 @@ describe('Outgoer Integration Test', () => {
       },
     });
 
+    // log stdout from outgoer smtp, useful for debugging
+    // child.stdout.on('data', (data: any) => { console.log(data.toString()) });
+
     // Wait for it to work
     await new Promise<void>((resolve) => {
       child.stdout.on('data', (data: any) => {

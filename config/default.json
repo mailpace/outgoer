@@ -8,9 +8,11 @@
     "cert": null,
     "ca": null
   },
-  "metrics": {
-    "path": "/metrics",
-    "port": 8080
+  "dashboard": {
+    "metricsPath": "/metrics",
+    "dashboardPath": "/dashboard",
+    "port": 8080,
+    "host": "localhost"
   },
   "services": [
     {
@@ -28,6 +30,10 @@
       }
     }
   ],
+  "redis": {
+    "port": 6379,
+    "host": "localhost"
+  },
   "modifiers": [
     {
       "name": "Add Tracking Pixel"

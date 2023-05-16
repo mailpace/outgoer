@@ -23,7 +23,7 @@ describe('Email Queue', () => {
 
   describe('initializeQueue', () => {
     it('should have initialized the queue and logged a message', () => {
-      expect(Queue).toHaveBeenCalledWith(SEND_QUEUE_NAME);
+      expect(Queue).toHaveBeenCalledWith(SEND_QUEUE_NAME, {"connection": {"host": "localhost", "port": 6379}});
       expect(logger.info).toHaveBeenCalledWith(
         `${SEND_QUEUE_NAME} queue initialized`,
       );

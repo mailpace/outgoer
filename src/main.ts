@@ -6,12 +6,14 @@ import { initializeMetrics } from './lib/metrics.js';
 import { startMetricsEndpoint } from './lib/routes.js';
 import { handleError } from './hooks/onError.js';
 import { initializeQueue } from './lib/emailQueue.js';
+import startSenderWorker from './workers/sender.js';
 
 logger.info("Launching Outgoer SMTP server and HTTP Endpoint...")
 
 initializeQueue();
 initializeMetrics();
 startMetricsEndpoint();
+startSenderWorker();
 
 export const server = new SMTPServer(config.outgoerSmtpServer);
 server.on('error', handleError);

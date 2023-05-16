@@ -20,7 +20,10 @@ describe('Metrics Endpoint', () => {
   });
 
   afterAll(() => {
+    // looks like this doesn't close arena
+    // also there's some kind of race condition between these tests and the full integration tests?
     app.close();
+
   });
 
   it('should expose the metrics endpoint on port 8080', async () => {
@@ -30,6 +33,11 @@ describe('Metrics Endpoint', () => {
     expect(response.header['content-type']).toMatch(/text\/plain/);
     expect(response.text).toBeDefined();
     expect(response.text).toContain("process_cpu_user_seconds_total");
+  });
+
+  it('should expose the arena dashboard on port 8080', async () => {
+    const response = await request("localhost:8080").get('/dashboard/');
+    expect(response.status).toBe(200);
   });
 
   it('should handle error and log it', async () => {

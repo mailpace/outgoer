@@ -20,10 +20,12 @@ export interface EmailConfiguration {
       | string[] /** Certificate authority chain for SSL/TLS encryption */;
   };
 
-  metrics: {
-    path: string /** Endpoint for grafana metrics */;
-    port: number /** Port number for grafana metrics */;
-  };
+  dashboard: {
+    metricsPath: string /** Endpoint for grafana metrics */;
+    dashboardPath: string /** Endpoint for arena dashboard */;
+    port: number /** Port number for metrics and arena dashboard */;
+    host: string /** Host for metrics and arena dashboard */
+  }
 
   /**
    * Array of 3rd party services to send emails through
@@ -50,6 +52,11 @@ export interface EmailConfiguration {
     // TODO: think the 3rd party providers through
     providerName: string,
   }[];
+
+  redis: {
+    host: string,
+    port: number
+  };
 
   /**
    * Functions that modify the email envelope / contents
