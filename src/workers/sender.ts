@@ -7,6 +7,7 @@ import { createTransport } from '../lib/transports/index.js';
 import { EmailConfiguration } from '../interfaces/config.js';
 import selectService from '../lib/selectService.js';
 import convertEnvelope from '../lib/convertEnvelope.js';
+import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
 
 const services = config.services;
 type ServiceSettings = EmailConfiguration['services'][number];
@@ -35,6 +36,7 @@ export default function startSenderWorker() {
  * TODO: update metrics
  * TODO: store the SMTP response in the Job
  * TODO: pass errors back from transport into job
+ * TODO: read the status code etc
  */
 export async function processEmailJob(job: Job<EmailJobData>) {
   if (!services || services.length === 0) {
@@ -57,7 +59,10 @@ export async function processEmailJob(job: Job<EmailJobData>) {
   const envelope = convertEnvelope(job.data.envelope);
 
   try {
-    transporter.sendMail({ raw, envelope });
+    const response: SMTPTransport.SentMessageInfo | void = await transporter.sendMail({ raw, envelope });
+    job.data.response = response;
+    // TODO: job.data.state = ""
+    await job.update(job.data);
     logger.info(`Email job ${job.id} sent successfully`);
   } catch (error) {
     handleTransporterError(job, error);
@@ -88,7 +93,7 @@ export async function updateJobData(job: Job<EmailJobData>, service: ServiceSett
 function handleTransporterError(job: Job<EmailJobData>, error: any) {
   logger.error(`Email job ${job.id} transporter error: Failed to forward email. Will attempt to resend`, error);
   job.moveToDelayed(RETRY_DELAY);
-  throw new DelayedError();
+  throw new DelayedError("Failed to forward email. Will attempt to resend");
 }
 
 function handleNoServicesConfigured(job: Job<EmailJobData>) {
