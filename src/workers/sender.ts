@@ -34,7 +34,6 @@ export default function startSenderWorker() {
  * TODO: sending limits per provider (remove the service if limits exceeded)
  * TODO: update states
  * TODO: update metrics
- * TODO: store the SMTP response in the Job
  * TODO: pass errors back from transport into job
  * TODO: read the status code etc
  */
@@ -51,11 +50,10 @@ export async function processEmailJob(job: Job<EmailJobData>) {
     return;
   }
 
-  updateJobData(job, chosenService);
+  updateJobProviders(job, chosenService);
 
   const transporter = createTransport(chosenService);
   const raw: string = job.data.raw;
-
   const envelope = convertEnvelope(job.data.envelope);
 
   try {
@@ -70,7 +68,7 @@ export async function processEmailJob(job: Job<EmailJobData>) {
 }
 
 /** Updates the job data with name of the provider about to attempt and number of attempts */
-export async function updateJobData(job: Job<EmailJobData>, service: ServiceSettings) {
+export async function updateJobProviders(job: Job<EmailJobData>, service: ServiceSettings) {
   const name = service.name;
 
   if (!job.data.attemptedProviders) {

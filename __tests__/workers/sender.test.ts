@@ -1,6 +1,7 @@
 import { Job } from 'bullmq';
 import { mock } from 'jest-mock-extended';
 import { processEmailJob } from '../../src/workers/sender.js';
+import { EmailJobData } from '../../src/interfaces/email.js';
 
 jest.mock('../../src/lib/transports/index.js', () => ({
   createTransport: jest.fn(() => ({
@@ -11,18 +12,17 @@ jest.mock('../../src/lib/transports/index.js', () => ({
 jest.mock('bullmq');
 
 describe('processEmailJob', () => {
-  afterAll(() => {
-    jest.clearAllMocks();
-  });
+  let job: Job<EmailJobData, any, string>;
 
-  it('should send email successfully', async () => {
-    const job = mock<Job>();
+  beforeEach(() => {
+    job = mock<Job>();
     job.data = {
       state: 'queued',
       raw: 'email raw data',
       envelope: {
         mailFrom: {
           address: 'test@example.com',
+          args: {},
         },
         rcptTo: [
           {
@@ -33,7 +33,15 @@ describe('processEmailJob', () => {
       },
       attemptedProviders: {},
     };
+  });
 
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
+
+  it('should send email successfully', () => {
+    console.log(job.data)
     processEmailJob(job)
 
     expect(job.update).toHaveBeenCalledWith(job.data);
@@ -43,4 +51,8 @@ describe('processEmailJob', () => {
     //  envelope: job.data.envelope,
     //});
   });
+
+  it('should throw an error if no services were configured', () => {
+    
+  })
 });
