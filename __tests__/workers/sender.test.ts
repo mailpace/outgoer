@@ -41,7 +41,6 @@ describe('processEmailJob', () => {
 
 
   it('should send email successfully', () => {
-    console.log(job.data)
     processEmailJob(job)
 
     expect(job.update).toHaveBeenCalledWith(job.data);

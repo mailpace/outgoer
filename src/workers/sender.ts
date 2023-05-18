@@ -62,7 +62,7 @@ export async function processEmailJob(job: Job<EmailJobData>) {
     // TODO: job.data.state = ""
     await job.update(job.data);
     logger.info(`Email job ${job.id} sent successfully`);
-  } catch (error) {
+  } catch (error: unknown) {
     handleTransporterError(job, error);
   }
 }
@@ -90,18 +90,26 @@ export async function updateJobProviders(job: Job<EmailJobData>, service: Servic
 
 function handleTransporterError(job: Job<EmailJobData>, error: any) {
   logger.error(`Email job ${job.id} transporter error: Failed to forward email. Will attempt to resend`, error);
+  job.data.errorResponse = error.message;
+  job.update(job.data)
   job.moveToDelayed(RETRY_DELAY);
   throw new DelayedError("Failed to forward email. Will attempt to resend");
 }
 
 function handleNoServicesConfigured(job: Job<EmailJobData>) {
-  logger.error(`Email job ${job.id} failed: No sending services configured. Please ensure there is at least one service configured.`);
-  throw new UnrecoverableError('Unrecoverable:  No sending services configured');
+  const errorString = "No sending services configured. Please ensure there is at least one service configured."
+  logger.error(`Email job ${job.id} failed: ${errorString}`);
+  job.data.errorResponse = errorString;
+  job.update(job.data);
+  throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }
 
 function handleAllProvidersAttempted(job: Job<EmailJobData>) {
-  logger.error(`Email job ${job.id} failed: All providers have been previously attempted.`);
-  throw new UnrecoverableError('Unrecoverable: All providers have been previously attempted.');
+  const errorString = "All providers have been previously attempted."
+  logger.error(`Email job ${job.id} failed: ${errorString}`);
+  job.data.errorResponse = errorString;
+  job.update(job.data);
+  throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }
 
 function handleJobCompleted(job: Job<EmailJobData>) {
@@ -109,6 +117,7 @@ function handleJobCompleted(job: Job<EmailJobData>) {
 }
 
 function handleJobFailed(job: Job<EmailJobData>, err: Error) {
+  job.data.errorResponse = `Failed with ${err.message}`;
   logger.error(`${job.id} has failed with ${err.message}`);
   // TODO: improve this to show the full stack trace etc.
 }

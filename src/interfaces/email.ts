@@ -7,6 +7,7 @@ export interface EmailJobData {
   state: string;
   attemptedProviders?: { [key: string]: AttemptedProvider };
   response?: SMTPTransport.SentMessageInfo | void;
+  errorResponse?: string;
 }
 
 export interface AttemptedProvider {
