@@ -21,7 +21,6 @@ export default function startSenderWorker() {
     connection: appConfig.redis
   });
 
-  worker.on('completed', handleJobCompleted);
   worker.on('failed', handleJobFailed);
 }
 
@@ -39,14 +38,12 @@ export default function startSenderWorker() {
 export async function processEmailJob(job: Job<EmailJobData>) {
   if (!services || services.length === 0) {
     handleNoServicesConfigured(job);
-    return;
   }
 
   const chosenService: ServiceSettings = selectService(services, job.data.attemptedProviders || {});
 
   if (!chosenService) {
     handleAllProvidersAttempted(job);
-    return;
   }
 
   job.data.state = emailStates.PROCESSING;
@@ -116,10 +113,6 @@ function handleAllProvidersAttempted(job: Job<EmailJobData>) {
   job.data.state = emailStates.FAILED;
   job.update(job.data);
   throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
-}
-
-function handleJobCompleted(job: Job<EmailJobData>) {
-  logger.info(`Email job ${job.id} completed`);
 }
 
 /**

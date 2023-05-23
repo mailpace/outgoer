@@ -1,7 +1,8 @@
-import { Job } from 'bullmq';
+import { Job, UnrecoverableError } from 'bullmq';
 import { mock } from 'jest-mock-extended';
 import { EmailJobData } from '../../src/interfaces/email.js';
 import * as sender from '../../src/workers/sender.js';
+import { emailStates } from '../../src/interfaces/states.js';
 
 jest.mock('../../src/lib/transports/index.js', () => ({
   createTransport: jest.fn(() => ({
@@ -40,18 +41,50 @@ describe('processEmailJob', () => {
   });
 
 
-  it('should send email successfully', () => {
-    // jest.doMock('../../src/config/index.js', () => config);
+  it('should send email successfully', async () => {
     const processEmailJobSpy = jest.spyOn(sender, 'processEmailJob');
 
-    sender.processEmailJob(job);
+    await sender.processEmailJob(job);
     expect(processEmailJobSpy).toHaveBeenCalledWith(job);
 
     expect(job.update).toHaveBeenCalledWith(job.data);
-    // expect(createTransportMock).toHaveBeenCalledWith(expect.anything());
-    // expect(createTransportMock().sendMail).toHaveBeenCalledWith({
-    //  raw: job.data.raw,
-    //  envelope: job.data.envelope,
-    //});
+    expect(job.data.state).toBe(emailStates.SENT)
+    // TODO: improve assertions
   });
+
+  it('should handle undefined attempted providers', async () => {
+    const processEmailJobSpy = jest.spyOn(sender, 'processEmailJob');
+    job.data = {
+      ...job.data,
+      attemptedProviders: undefined,
+    };
+    await sender.processEmailJob(job)
+    expect(processEmailJobSpy).toHaveBeenCalledWith(job);
+    expect(job.update).toHaveBeenCalledWith(job.data);
+    expect(job.data.state).toBe(emailStates.SENT)
+  });
+  
+  it('should handle no chosen service left', async () => {
+    job.data = {
+      ...job.data,
+      attemptedProviders: {
+        "smtp test 2": { // from the default.json config. TODO: mock config
+          attempts: 10,
+        }
+      }
+    };
+
+    try {
+      await sender.processEmailJob(job);
+      fail('Expected processEmailJob to throw UnrecoverableError');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UnrecoverableError);
+      expect(job.update).toHaveBeenCalled();
+      expect(job.data.errorResponse).toContain(
+        'All providers have been previously attempted.',
+      );
+      expect(job.data.state).toEqual(emailStates.FAILED);
+    }
+  });
+  
 });
