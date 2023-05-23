@@ -2,6 +2,7 @@
  * Configuration object for Outgoer settings
  */
 export interface EmailConfiguration {
+  session: any;
   /**
    * The Outgoer SMTP server options
    */
@@ -38,13 +39,13 @@ export interface EmailConfiguration {
       | 'smtp'
       | 'library';
     priority: number /** Priority of the delivery mechanism */;
-    limit: number /** Maximum number of emails/month */;
+    limit?: number /** Maximum number of emails/month */;
 
     smtpSettings?: {
       host: string /** Hostname or IP address of SMTP server */;
       port: number /** Port number for SMTP server */;
       secure: boolean /** Whether the SMTP server uses SSL/TLS encryption */;
-      auth: {
+      auth?: {
         user: string /** Username for SMTP server authentication */;
         pass: string /** Password for SMTP server authentication */;
       };

@@ -1,15 +1,16 @@
 import { Worker, Job, UnrecoverableError, DelayedError } from 'bullmq';
-import config from '../config/index.js';
+import appConfig from '../config/index.js';
 import { logger } from '../lib/logger.js';
 import { SEND_QUEUE_NAME } from '../lib/emailQueue.js';
 import { EmailJobData } from '../interfaces/email.js';
+import { emailStates } from '../interfaces/states.js';
 import { createTransport } from '../lib/transports/index.js';
 import { EmailConfiguration } from '../interfaces/config.js';
 import selectService from '../lib/selectService.js';
 import convertEnvelope from '../lib/convertEnvelope.js';
 import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
 
-const services = config.services;
+const services = appConfig.services;
 type ServiceSettings = EmailConfiguration['services'][number];
 
 // TODO: exponential back-off
@@ -17,7 +18,7 @@ const RETRY_DELAY: number = 5000;
 
 export default function startSenderWorker() {
   const worker = new Worker<EmailJobData>(SEND_QUEUE_NAME, processEmailJob, {
-    connection: config.redis
+    connection: appConfig.redis
   });
 
   worker.on('completed', handleJobCompleted);
@@ -32,9 +33,7 @@ export default function startSenderWorker() {
  * TODO: handle complete provider outages, before attempting 5 attempts (if possible?)
  * TODO: configurable per provider max attempts
  * TODO: sending limits per provider (remove the service if limits exceeded)
- * TODO: update states
  * TODO: update metrics
- * TODO: pass errors back from transport into job
  * TODO: read the status code etc
  */
 export async function processEmailJob(job: Job<EmailJobData>) {
@@ -50,6 +49,9 @@ export async function processEmailJob(job: Job<EmailJobData>) {
     return;
   }
 
+  job.data.state = emailStates.PROCESSING;
+  job.update(job.data);
+
   updateJobProviders(job, chosenService);
 
   const transporter = createTransport(chosenService);
@@ -59,10 +61,11 @@ export async function processEmailJob(job: Job<EmailJobData>) {
   try {
     const response: SMTPTransport.SentMessageInfo | void = await transporter.sendMail({ raw, envelope });
     job.data.response = response;
-    // TODO: job.data.state = ""
+    job.data.state = emailStates.SENT;
     await job.update(job.data);
     logger.info(`Email job ${job.id} sent successfully`);
   } catch (error: unknown) {
+    console.log(error)
     handleTransporterError(job, error);
   }
 }
@@ -91,8 +94,9 @@ export async function updateJobProviders(job: Job<EmailJobData>, service: Servic
 function handleTransporterError(job: Job<EmailJobData>, error: any) {
   logger.error(`Email job ${job.id} transporter error: Failed to forward email. Will attempt to resend`, error);
   job.data.errorResponse = error.message;
+  job.data.state = emailStates.RETRYING;
   job.update(job.data)
-  job.moveToDelayed(RETRY_DELAY);
+  job.moveToDelayed(Date.now() + RETRY_DELAY);
   throw new DelayedError("Failed to forward email. Will attempt to resend");
 }
 
@@ -100,6 +104,7 @@ function handleNoServicesConfigured(job: Job<EmailJobData>) {
   const errorString = "No sending services configured. Please ensure there is at least one service configured."
   logger.error(`Email job ${job.id} failed: ${errorString}`);
   job.data.errorResponse = errorString;
+  job.data.state = emailStates.FAILED;
   job.update(job.data);
   throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }
@@ -108,6 +113,7 @@ function handleAllProvidersAttempted(job: Job<EmailJobData>) {
   const errorString = "All providers have been previously attempted."
   logger.error(`Email job ${job.id} failed: ${errorString}`);
   job.data.errorResponse = errorString;
+  job.data.state = emailStates.FAILED;
   job.update(job.data);
   throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }
@@ -116,8 +122,17 @@ function handleJobCompleted(job: Job<EmailJobData>) {
   logger.info(`Email job ${job.id} completed`);
 }
 
+/**
+ * Caught errors from the job are captured here
+ * in normal use, these should not occur
+ * 
+ * @param job 
+ * @param err 
+ */
 function handleJobFailed(job: Job<EmailJobData>, err: Error) {
   job.data.errorResponse = `Failed with ${err.message}`;
+  job.data.state = emailStates.FAILED;
+  job.update(job.data);
   logger.error(`${job.id} has failed with ${err.message}`);
   // TODO: improve this to show the full stack trace etc.
 }

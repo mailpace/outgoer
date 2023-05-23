@@ -2,7 +2,7 @@ import express from 'express';
 import Arena from 'bull-arena';
 import { Queue } from 'bullmq';
 
-import config from '../config/index.js';
+import appConfig from '../config/index.js';
 import { logger } from '../lib/logger.js';
 import { getMetricsRegistry } from './metrics.js';
 import { IncomingMessage, Server, ServerResponse } from 'http';
@@ -11,7 +11,7 @@ import { SEND_QUEUE_NAME } from './emailQueue.js';
 
 const router = express.Router();
 
-router.get(config.dashboard.metricsPath, (_req, res) => {
+router.get(appConfig.dashboard.metricsPath, (_req, res) => {
   res.set('Content-Type', getMetricsRegistry().contentType);
   handleMetrics(getMetricsRegistry(), res);
 });
@@ -25,14 +25,14 @@ const arena = Arena(
         hostId: 'Outgoer Send Queue', // User-readable display name for the host. Required.
         type: 'bullmq',
         redis: {
-          host: config.redis.host,
-          port: config.redis.port
+          host: appConfig.redis.host,
+          port: appConfig.redis.port
         }
       },
     ],
   },
   {
-    basePath: config.dashboard.dashboardPath,
+    basePath: appConfig.dashboard.dashboardPath,
     disableListen: true,
   },
 );
@@ -42,16 +42,16 @@ export function startMetricsEndpoint(): Server<
   typeof ServerResponse
 > {
   const app = express();
-  const port = config.dashboard.port;
-  const host = config.dashboard.host;
+  const port = appConfig.dashboard.port;
+  const host = appConfig.dashboard.host;
 
   router.use(arena);
   app.use(router);
 
   return app.listen(port, host, () => {
     logger.info(
-      `Outgoer metrics endpoint available at http://${host}:${port}${config.dashboard.metricsPath}.
-      Outgoer dashboard available at http://${host}:${port}${config.dashboard.dashboardPath}/`,
+      `Outgoer metrics endpoint available at http://${host}:${port}${appConfig.dashboard.metricsPath}.
+      Outgoer dashboard available at http://${host}:${port}${appConfig.dashboard.dashboardPath}/`,
     );
   });
 }

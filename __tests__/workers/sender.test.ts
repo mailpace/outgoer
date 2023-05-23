@@ -1,7 +1,7 @@
 import { Job } from 'bullmq';
 import { mock } from 'jest-mock-extended';
-import { processEmailJob } from '../../src/workers/sender.js';
 import { EmailJobData } from '../../src/interfaces/email.js';
+import * as sender from '../../src/workers/sender.js';
 
 jest.mock('../../src/lib/transports/index.js', () => ({
   createTransport: jest.fn(() => ({
@@ -41,7 +41,11 @@ describe('processEmailJob', () => {
 
 
   it('should send email successfully', () => {
-    processEmailJob(job)
+    // jest.doMock('../../src/config/index.js', () => config);
+    const processEmailJobSpy = jest.spyOn(sender, 'processEmailJob');
+
+    sender.processEmailJob(job);
+    expect(processEmailJobSpy).toHaveBeenCalledWith(job);
 
     expect(job.update).toHaveBeenCalledWith(job.data);
     // expect(createTransportMock).toHaveBeenCalledWith(expect.anything());
@@ -50,8 +54,4 @@ describe('processEmailJob', () => {
     //  envelope: job.data.envelope,
     //});
   });
-
-  it('should throw an error if no services were configured', () => {
-    
-  })
 });

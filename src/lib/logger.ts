@@ -10,12 +10,9 @@ export const logger = bunyan.createLogger({
       stream: process.stderr // Output to the standard error stream
     },
     {
-      level: 'warn',
-      stream: process.stdout // Output to the standard output stream
-    },
-    {
       level: 'info',
       stream: process.stdout // Output to the standard output stream
     }
-  ]
+  ],
+  serializers: bunyan.stdSerializers
 });

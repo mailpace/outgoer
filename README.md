@@ -42,6 +42,6 @@ Outgoer is simple to setup, lives entirely inside your network, and speaks the s
 See examples/configuration for example configurations.
 
 
-# 
+# Who, what why
 
 Outgoer was created, and is maintained by https://mailpace.com - a Transactional Email provider
