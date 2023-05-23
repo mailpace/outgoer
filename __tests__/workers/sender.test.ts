@@ -86,5 +86,25 @@ describe('processEmailJob', () => {
       expect(job.data.state).toEqual(emailStates.FAILED);
     }
   });
+
+  it('it should increment attempts', async () => {
+    job.data = {
+      ...job.data,
+      attemptedProviders: {
+        "smtp test 2": { // from the default.json config. TODO: mock config
+          attempts: 1,
+        }
+      }
+    };
+    await sender.processEmailJob(job);
+    expect(job.data.attemptedProviders["smtp test 2"].attempts).toBe(2);
+  });
+
+  it('should start sender worker', () => {
+    const startSenderWorkerSpy = jest.spyOn(sender, 'default');
+    sender.default();
+    expect(startSenderWorkerSpy).toHaveBeenCalled();
+    // TODO: better assertion that the worker is added to the queue
+  });
   
 });

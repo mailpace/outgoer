@@ -13,7 +13,6 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
 const services = appConfig.services;
 type ServiceSettings = EmailConfiguration['services'][number];
 
-// TODO: exponential back-off
 const RETRY_DELAY: number = 5000;
 
 export default function startSenderWorker() {
@@ -29,11 +28,10 @@ export default function startSenderWorker() {
  * It tracks the state by updating the job data
  * If all providers have exceeded 5 attempts the job fails
  * 
- * TODO: handle complete provider outages, before attempting 5 attempts (if possible?)
+ * TODO: exponential back off
  * TODO: configurable per provider max attempts
  * TODO: sending limits per provider (remove the service if limits exceeded)
  * TODO: update metrics
- * TODO: read the status code etc
  */
 export async function processEmailJob(job: Job<EmailJobData>) {
   if (!services || services.length === 0) {
@@ -89,12 +87,13 @@ export async function updateJobProviders(job: Job<EmailJobData>, service: Servic
  */
 
 function handleTransporterError(job: Job<EmailJobData>, error: any) {
-  logger.error(`Email job ${job.id} transporter error: Failed to forward email. Will attempt to resend`, error);
+  const errorString = "Failed to forward email. Will attempt to resend."
+  logger.error(`Email job ${job.id} transporter error: ${errorString}`, error);
   job.data.errorResponse = error.message;
   job.data.state = emailStates.RETRYING;
   job.update(job.data)
   job.moveToDelayed(Date.now() + RETRY_DELAY);
-  throw new DelayedError("Failed to forward email. Will attempt to resend");
+  throw new DelayedError(`${errorString}`);
 }
 
 function handleNoServicesConfigured(job: Job<EmailJobData>) {
@@ -126,6 +125,5 @@ function handleJobFailed(job: Job<EmailJobData>, err: Error) {
   job.data.errorResponse = `Failed with ${err.message}`;
   job.data.state = emailStates.FAILED;
   job.update(job.data);
-  logger.error(`${job.id} has failed with ${err.message}`);
-  // TODO: improve this to show the full stack trace etc.
+  logger.error(`Unexpected sender job error. ${job.id} has failed with ${err.message} ${err.name} ${err.cause} ${err.stack}`);
 }
