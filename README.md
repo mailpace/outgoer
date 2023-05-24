@@ -18,12 +18,12 @@ _\- <a href="chat.openai.com/">GPT 3.5</a>_
 
 and more!
 
-Outgoer is simple to setup, lives entirely inside your network, and speaks the same SMTP your apps  use today.
+Outgoer is simple to setup, lives entirely inside your network, and speaks the same SMTP your apps use today.
 
 # How it works
 
 - Deploy Outgoer on your own network
-- Add your sender credentials to Outgoer
+- Add your 3rd party SMTP and API credentials to Outgoer
 - Point your apps email SMTP at Outgoer
 - Outgoer does the rest!
 
@@ -36,11 +36,15 @@ Outgoer is simple to setup, lives entirely inside your network, and speaks the s
 - `docker pull mailpace/outgoer:v1`
 - `docker run -p 8080:8080 --env CONFIG_VAR="abc" mailpace/outgoer:v1`
 
-
 # Configuration
 
-See examples/configuration for example configurations.
+See [examples/configuration]() for example configurations.
 
+# Metrics
+
+There is a Prometheus endpoint for metrics available by default on at `/metrics' on port `8080`. See /dashboards for an example Grafana dashboard.
+
+There is a Dashboard to view the current queue available at `/dash` on port `8080`.
 
 # Who, what why
 

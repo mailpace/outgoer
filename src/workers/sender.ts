@@ -15,12 +15,13 @@ type ServiceSettings = EmailConfiguration['services'][number];
 
 const RETRY_DELAY: number = 5000;
 
-export default function startSenderWorker() {
+export default function startSenderWorker(): Worker<EmailJobData, any, string> {
   const worker = new Worker<EmailJobData>(SEND_QUEUE_NAME, processEmailJob, {
     connection: appConfig.redis
   });
 
   worker.on('failed', handleJobFailed);
+  return worker;
 }
 
 /**
@@ -60,7 +61,6 @@ export async function processEmailJob(job: Job<EmailJobData>) {
     await job.update(job.data);
     logger.info(`Email job ${job.id} sent successfully`);
   } catch (error: unknown) {
-    console.log(error)
     handleTransporterError(job, error);
   }
 }
@@ -121,9 +121,11 @@ function handleAllProvidersAttempted(job: Job<EmailJobData>) {
  * @param job 
  * @param err 
  */
-function handleJobFailed(job: Job<EmailJobData>, err: Error) {
+export function handleJobFailed(job: Job<EmailJobData>, err: Error) {
+  const errorString = `${job.id} has failed with ${err.message} ${err.name} ${err.cause} ${err.stack}`
   job.data.errorResponse = `Failed with ${err.message}`;
   job.data.state = emailStates.FAILED;
   job.update(job.data);
-  logger.error(`Unexpected sender job error. ${job.id} has failed with ${err.message} ${err.name} ${err.cause} ${err.stack}`);
+  logger.error(`Unexpected sender job error. ${errorString}`);
+  throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }

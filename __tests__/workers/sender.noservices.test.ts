@@ -1,6 +1,6 @@
 /**
  * This separate test file exists because we can't find a way to mock the config
- * appropriately on a per test basis
+ * or createTransport appropriately on a per test basis
  */
 
 import { Job, UnrecoverableError } from 'bullmq';
@@ -10,9 +10,7 @@ import * as sender from '../../src/workers/sender.js';
 import { emailStates } from '../../src/interfaces/states.js';
 
 jest.mock('../../src/lib/transports/index.js', () => ({
-  createTransport: jest.fn(() => ({
-    sendMail: jest.fn(),
-  })),
+  createTransport: jest.fn(),
 }));
 
 // Mock the config
