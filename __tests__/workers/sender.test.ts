@@ -106,5 +106,8 @@ describe('processEmailJob', () => {
     expect(startSenderWorkerSpy).toHaveBeenCalled();
     // TODO: better assertion that the worker is added to the queue
   });
-  
+
+  it('should increment the sent counter per provider', () => {
+    // TODO
+  });
 });

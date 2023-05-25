@@ -57,6 +57,7 @@
     "express": "^4.18.2",
     "mailparser": "^3.6.4",
     "prom-client": "^14.2.0",
+    "redis": "^4.6.6",
     "smtp-server": "~3.11.0",
     "tslib": "~2.5"
   },
