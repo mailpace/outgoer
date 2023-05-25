@@ -1,19 +1,7 @@
-import Redis from 'redis';
+const Redis = require('ioredis-mock');
 import * as serviceTracker from '../../src/lib/serviceTracker.js';
 
-jest.mock('redis', () => {
-  let count = 0;
-  const mockIncr = jest.fn(() => {
-    count++;
-    return count;
-  });
-
-  return {
-    createClient: jest.fn(() => ({
-      incr: mockIncr,
-    })),
-  };
-});
+jest.mock("ioredis");
 
 jest.mock('../../src/config/index.js', () => ({
   redis: {
@@ -23,32 +11,45 @@ jest.mock('../../src/config/index.js', () => ({
   services: [
     { name: 'service1' },
     { name: 'service2', limit: 5 },
-    { name: 'service4', limit: 1 },
+    { name: 'service4', limit: 5 },
     { name: 'service space ', limit: 5 },
+    { name: 'service-exists', limit: 5 },
   ],
 }));
 
 describe('incrementSenderSent', () => {
-  let mockRedisClient;
+  let mockRedisClient: typeof Redis;
 
   beforeEach(() => {
-    mockRedisClient = Redis.createClient();
+    mockRedisClient = new Redis({
+      // `options.data` does not exist in `ioredis`, only `ioredis-mock`
+      data: {
+        'sent_emails:service4': 5,
+        'sent_emails:service-exists': 1,
+      },
+    });
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should increment count for a service without a limit', () => {
-    const serviceName = 'service1';
-    serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
-    expect(mockRedisClient.incr).toHaveBeenCalledWith('sent_emails:service1');
+  afterAll(() => {
+    jest.clearAllMocks();
+    mockRedisClient.disconnect();
   });
 
-  it('should increment count for a service within the limit', () => {
+
+  it('should increment count for a service without a limit', async () => {
+    const serviceName = 'service1';
+    await serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
+    expect(await mockRedisClient.get(`sent_emails:${serviceName}`)).toBe("1");
+  });
+
+  it('should increment count for a service within the limit', async () => {
     const serviceName = 'service2';
-    serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
-    expect(mockRedisClient.incr).toHaveBeenCalledWith('sent_emails:service2');
+    await serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
+    expect(await mockRedisClient.get(`sent_emails:${serviceName}`)).toBe("1");
   });
 
   it('should throw an error when a service is not found', async () => {
@@ -65,18 +66,20 @@ describe('incrementSenderSent', () => {
     await expect(
       serviceTracker.incrementSenderSent(serviceName, mockRedisClient),
     ).rejects.toThrowError(
-      'Service service4 has exceeded the limit of 1 emails.',
+      'Service service4 has exceeded the limit of 5 emails.',
     );
   });
 
-  it('should support services with spaces in their name', () => {
+  it('should support services with spaces in their name', async () => {
     const serviceName = 'service space ';
+    await serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
+    expect(await mockRedisClient.get(`sent_emails:${serviceName}`)).toBe("1");
+  });
 
-    serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
-
-    expect(mockRedisClient.incr).toHaveBeenCalledWith(
-      'sent_emails:service space ',
-    );
+  it('should support services with an existing key in redis', async () => {
+    const serviceName = 'service-exists';
+    await serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
+    expect(await mockRedisClient.get(`sent_emails:${serviceName}`)).toBe("2");
   });
 });
 
@@ -87,8 +90,9 @@ describe('getServices', () => {
     expect(services).toEqual([
       { name: 'service1', limit: undefined },
       { name: 'service2', limit: 5 },
-      { name: 'service4', limit: 1 },
+      { name: 'service4', limit: 5 },
       { name: 'service space ', limit: 5 },
+      { name: 'service-exists', limit: 5 },
     ]);
   });
 });

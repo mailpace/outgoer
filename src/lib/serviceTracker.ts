@@ -1,11 +1,9 @@
-import Redis from 'redis';
+const Redis = require("ioredis");
 import appConfig from '../config/index.js';
 
-const redisClient = Redis.createClient({
-  socket: {
-    host: appConfig.redis.host,
-    port: appConfig.redis.port,
-  },
+const redisClient = new Redis({
+  host: appConfig.redis.host,
+  port: appConfig.redis.port,
 });
 
 const SERVICES: { name: string; limit?: number }[] = getServices();
@@ -30,6 +28,7 @@ export async function incrementSenderSent(serviceName: string, client = redisCli
       throw error;
     }
   } else {
+    // No, no limits, we'll reach for the sky
     client.incr(`sent_emails:${serviceName}`);
   }
 }
