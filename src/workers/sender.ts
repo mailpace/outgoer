@@ -9,6 +9,7 @@ import { EmailConfiguration } from '../interfaces/config.js';
 import selectService from '../lib/selectService.js';
 import convertEnvelope from '../lib/convertEnvelope.js';
 import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
+import { incrementSenderSent } from '../lib/serviceTracker.js';
 
 const services = appConfig.services;
 type ServiceSettings = EmailConfiguration['services'][number];
@@ -49,6 +50,13 @@ export async function processEmailJob(job: Job<EmailJobData>) {
   job.update(job.data);
 
   updateJobProviders(job, chosenService);
+
+  try {
+    await incrementSenderSent(chosenService.name);
+  } catch (error) {
+    // TODO: handle exceeded error
+    console.log(error)
+  }
 
   const transporter = createTransport(chosenService);
   const raw: string = job.data.raw;

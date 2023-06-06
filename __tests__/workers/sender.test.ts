@@ -10,6 +10,12 @@ jest.mock('../../src/lib/transports/index.js', () => ({
   })),
 }));
 
+jest.mock('../../src/lib/serviceTracker.js', () => ({
+  incrementSenderSent: jest.fn((name) => ({
+    name
+  })),
+}));
+
 jest.mock('bullmq');
 
 describe('processEmailJob', () => {
@@ -36,7 +42,7 @@ describe('processEmailJob', () => {
     };
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     jest.clearAllMocks();
   });
 

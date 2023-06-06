@@ -1,7 +1,11 @@
 const Redis = require('ioredis-mock');
 import * as serviceTracker from '../../src/lib/serviceTracker.js';
 
-jest.mock("ioredis");
+// This mock does nothing as we pass in the redis client below
+jest.mock('ioredis', () => ({
+  Redis: jest.fn().mockReturnValue({})
+}));
+
 
 jest.mock('../../src/config/index.js', () => ({
   redis: {

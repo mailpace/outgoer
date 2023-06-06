@@ -1,10 +1,9 @@
-const Redis = require("ioredis");
+import { Redis } from "ioredis";
 import appConfig from '../config/index.js';
 
-const redisClient = new Redis({
-  host: appConfig.redis.host,
-  port: appConfig.redis.port,
-});
+const redisClient = new Redis(
+  appConfig.redis
+);
 
 const SERVICES: { name: string; limit?: number }[] = getServices();
 
