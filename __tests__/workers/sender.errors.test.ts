@@ -17,6 +17,13 @@ jest.mock('../../src/lib/transports/index.js', () => ({
   })),
 }));
 
+jest.mock('../../src/lib/serviceTracker.js', () => ({
+  incrementSenderSent: jest.fn((name) => ({
+    name
+  })),
+}));
+
+
 jest.mock('bullmq');
 
 describe('Worker events', () => {

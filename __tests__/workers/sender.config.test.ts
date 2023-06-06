@@ -18,6 +18,13 @@ jest.mock('../../src/config/index.js', () => ({
   services: [],
 }));
 
+jest.mock('../../src/lib/serviceTracker.js', () => ({
+  incrementSenderSent: jest.fn((name) => ({
+    name
+  })),
+}));
+
+
 describe('processEmailJob', () => {
   let job: Job<EmailJobData, any, string>;
 
