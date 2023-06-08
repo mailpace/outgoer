@@ -50,14 +50,16 @@ describe('Worker events', () => {
       },
       attemptedProviders: {},
     };
+    let error: Error;
     try {
       sender.handleJobFailed(job, new Error('Test error'));
-      fail('Expected handleJobFailed to throw unrecoverable error');
-    } catch (error) {
-      expect(error).toBeInstanceOf(UnrecoverableError);
-      expect(job.data.state).toEqual(emailStates.FAILED);
-      expect(job.data.errorResponse).toEqual('Failed with Test error');
+      throw('Expected handleJobFailed to throw unrecoverable error');
+    } catch (err) {
+      error = err;
     }
+    expect(error).toBeInstanceOf(UnrecoverableError);
+    expect(job.data.state).toEqual(emailStates.FAILED);
+    expect(job.data.errorResponse).toEqual('Failed with Test error');
   });
 });
 
@@ -90,12 +92,14 @@ describe('processEmailJob', () => {
   });
 
   it('should throw a delayed error if an error is thrown by the transport', async () => {
+    let error: Error;
     try {
       await sender.processEmailJob(job);
-      fail('Expected processEmailJob to throw DelayedError');
-    } catch (error) {
-      expect(error).toBeInstanceOf(DelayedError);
-      expect(job.data.state).toEqual(emailStates.RETRYING);
+      throw('Expected processEmailJob to throw DelayedError');
+    } catch (err) {
+      error = err;
     }
+    expect(error).toBeInstanceOf(DelayedError);
+    expect(job.data.state).toEqual(emailStates.RETRYING);
   });
 });

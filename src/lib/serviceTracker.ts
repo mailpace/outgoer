@@ -16,15 +16,11 @@ export async function incrementSenderSent(serviceName: string, client = redisCli
 
   if (service.limit !== undefined) {
     const key = `sent_emails:${serviceName}`;
-    try {
-      const count = await client.incr(key);
-      if (count > service.limit!) {
-        throw new Error(
-          `Service ${serviceName} has exceeded the limit of ${service.limit} emails.`,
-        );
-      }
-    } catch (error) {
-      throw error;
+    const count = await client.incr(key);
+    if (count > service.limit!) {
+      throw new Error(
+        `Service ${serviceName} has exceeded the limit of ${service.limit} emails.`,
+      );
     }
   } else {
     // No, no limits, we'll reach for the sky

@@ -80,17 +80,19 @@ describe('processEmailJob', () => {
       }
     };
 
+    let error: Error;
     try {
       await sender.processEmailJob(job);
-      fail('Expected processEmailJob to throw UnrecoverableError');
-    } catch (error) {
-      expect(error).toBeInstanceOf(UnrecoverableError);
-      expect(job.update).toHaveBeenCalled();
-      expect(job.data.errorResponse).toContain(
-        'All providers have been previously attempted.',
-      );
-      expect(job.data.state).toEqual(emailStates.FAILED);
+      throw('Expected processEmailJob to throw UnrecoverableError');
+    } catch (err) {
+      error = err;
     }
+    expect(error).toBeInstanceOf(UnrecoverableError);
+    expect(job.update).toHaveBeenCalled();
+    expect(job.data.errorResponse).toContain(
+      'All providers have been previously attempted.',
+    );
+    expect(job.data.state).toEqual(emailStates.FAILED);
   });
 
   it('should increment attempts', async () => {
