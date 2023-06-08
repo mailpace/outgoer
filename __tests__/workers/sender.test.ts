@@ -93,7 +93,7 @@ describe('processEmailJob', () => {
     }
   });
 
-  it('it should increment attempts', async () => {
+  it('should increment attempts', async () => {
     job.data = {
       ...job.data,
       attemptedProviders: {

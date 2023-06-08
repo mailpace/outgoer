@@ -26,7 +26,7 @@ jest.mock('../../src/lib/serviceTracker.js', () => ({
 
 
 describe('processEmailJob', () => {
-  let job: Job<EmailJobData, any, string>;
+  let job: Job<EmailJobData, string, string>;
 
   beforeEach(() => {
     job = mock<Job>();
@@ -37,16 +37,18 @@ describe('processEmailJob', () => {
   });
 
   it('should throw an error if no services were configured', async () => {
+    let error: Error;
     try {
       await sender.processEmailJob(job);
-      fail('Expected processEmailJob to throw UnrecoverableError');
-    } catch (error) {
-      expect(error).toBeInstanceOf(UnrecoverableError);
-      expect(job.update).toHaveBeenCalled();
-      expect(job.data.errorResponse).toContain(
-        'No sending services configured.',
-      );
-      expect(job.data.state).toEqual(emailStates.FAILED);
+      throw new Error("Expected processEmailJob to throw UnrecoverableError");
+    } catch (err) {
+      error = err;
     }
+    expect(error).toBeInstanceOf(UnrecoverableError);
+    expect(job.update).toHaveBeenCalled();
+    expect(job.data.errorResponse).toContain(
+      'No sending services configured.',
+    );
+    expect(job.data.state).toEqual(emailStates.FAILED);
   });
 });

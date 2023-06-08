@@ -1,11 +1,10 @@
-const Redis = require('ioredis-mock');
+import Redis from 'ioredis-mock';
 import * as serviceTracker from '../../src/lib/serviceTracker.js';
 
 // This mock does nothing as we pass in the redis client below
 jest.mock('ioredis', () => ({
   Redis: jest.fn().mockReturnValue({})
 }));
-
 
 jest.mock('../../src/config/index.js', () => ({
   redis: {
@@ -22,10 +21,10 @@ jest.mock('../../src/config/index.js', () => ({
 }));
 
 describe('incrementSenderSent', () => {
-  let mockRedisClient: typeof Redis;
+  let mockRedisClient;
 
   beforeEach(() => {
-    mockRedisClient = new Redis({
+    mockRedisClient = new Redis.default({
       // `options.data` does not exist in `ioredis`, only `ioredis-mock`
       data: {
         'sent_emails:service4': 5,
@@ -61,7 +60,7 @@ describe('incrementSenderSent', () => {
 
     await expect(
       serviceTracker.incrementSenderSent(serviceName, mockRedisClient),
-    ).rejects.toThrowError('Service service3 not found in the configuration.');
+    ).rejects.toThrow('Service service3 not found in the configuration.');
   });
 
   it('should throw an error when a service exceeds the limit', async () => {
@@ -69,7 +68,7 @@ describe('incrementSenderSent', () => {
 
     await expect(
       serviceTracker.incrementSenderSent(serviceName, mockRedisClient),
-    ).rejects.toThrowError(
+    ).rejects.toThrow(
       'Service service4 has exceeded the limit of 5 emails.',
     );
   });

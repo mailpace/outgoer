@@ -14,7 +14,7 @@ import { incrementSenderSent } from '../lib/serviceTracker.js';
 const services = appConfig.services;
 type ServiceSettings = EmailConfiguration['services'][number];
 
-const RETRY_DELAY: number = 5000;
+const RETRY_DELAY = 5000;
 
 export default function startSenderWorker(): Worker<EmailJobData, any, string> {
   const worker = new Worker<EmailJobData>(SEND_QUEUE_NAME, processEmailJob, {

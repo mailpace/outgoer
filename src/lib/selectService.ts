@@ -4,7 +4,7 @@ import { EmailJobData } from '../interfaces/email.js';
 type ServiceSettings = EmailConfiguration['services'][number];
 type AttemptedProviders = EmailJobData['attemptedProviders'];
 
-const MAX_SEND_ATTEMPTS_PER_PROVIDER: number = 5;
+const MAX_SEND_ATTEMPTS_PER_PROVIDER = 5;
 
 /**
  * This selects the highest priority service, based on the priority integer
