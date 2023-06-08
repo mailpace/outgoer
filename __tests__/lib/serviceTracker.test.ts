@@ -1,7 +1,7 @@
 import Redis from 'ioredis-mock';
 import * as serviceTracker from '../../src/lib/serviceTracker.js';
 
-// This mock does nothing as we pass in the redis client below
+// This mock does nothing for most tests as we pass in the redis client below
 jest.mock('ioredis', () => ({
   Redis: jest.fn().mockReturnValue({})
 }));
@@ -83,6 +83,13 @@ describe('incrementSenderSent', () => {
     const serviceName = 'service-exists';
     await serviceTracker.incrementSenderSent(serviceName, mockRedisClient);
     expect(await mockRedisClient.get(`sent_emails:${serviceName}`)).toBe("2");
+  });
+
+  it('should work without a redis client', async () => {
+    const serviceName = 'service-exists';
+    await expect(
+      serviceTracker.incrementSenderSent(serviceName),
+    ).rejects.toThrow(); // throws because we don't fully mock ioredis
   });
 });
 
