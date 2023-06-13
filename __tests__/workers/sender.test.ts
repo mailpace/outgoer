@@ -3,6 +3,7 @@ import { mock } from 'jest-mock-extended';
 import { EmailJobData } from '../../src/interfaces/email.js';
 import * as sender from '../../src/workers/sender.js';
 import { emailStates } from '../../src/interfaces/states.js';
+import * as serviceTracker from '../../src/lib/serviceTracker.js';
 
 jest.mock('../../src/lib/transports/index.js', () => ({
   createTransport: jest.fn(() => ({
@@ -11,6 +12,7 @@ jest.mock('../../src/lib/transports/index.js', () => ({
 }));
 
 jest.mock('../../src/lib/serviceTracker.js', () => ({
+  __esModule: true,
   incrementSenderSent: jest.fn((name) => ({
     name
   })),
@@ -42,7 +44,7 @@ describe('processEmailJob', () => {
     };
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     jest.clearAllMocks();
   });
 
@@ -115,7 +117,18 @@ describe('processEmailJob', () => {
     // TODO: better assertion that the worker is added to the queue
   });
 
-  it('should increment the sent counter per provider', () => {
-    // TODO
+  it('should increment sender sent when sending an email', async () => {
+    await sender.processEmailJob(job);
+    expect(serviceTracker.incrementSenderSent).toHaveBeenCalled();
+  });
+
+  it('should handle an increment that failed (i.e. its over the limit)', async () => {
+    const mockServiceTracker = serviceTracker as { incrementSenderSent };
+    mockServiceTracker.incrementSenderSent = async (_serviceName: string, _client?) => {
+      throw new Error('it failed');
+    };
+
+    // todo: check the rejects error message includes it failed
+    await expect(sender.processEmailJob(job)).rejects.toEqual({});
   });
 });

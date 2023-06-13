@@ -32,7 +32,6 @@ export default function startSenderWorker(): Worker<EmailJobData, any, string> {
  * 
  * TODO: exponential back off
  * TODO: configurable per provider max attempts
- * TODO: sending limits per provider (remove the service if limits exceeded)
  * TODO: update metrics
  */
 export async function processEmailJob(job: Job<EmailJobData>) {
@@ -40,7 +39,7 @@ export async function processEmailJob(job: Job<EmailJobData>) {
     handleNoServicesConfigured(job);
   }
 
-  const chosenService: ServiceSettings = selectService(services, job.data.attemptedProviders || {});
+  let chosenService: ServiceSettings = selectService(services, job.data.attemptedProviders || {});
 
   if (!chosenService) {
     handleAllProvidersAttempted(job);
@@ -54,8 +53,17 @@ export async function processEmailJob(job: Job<EmailJobData>) {
   try {
     await incrementSenderSent(chosenService.name);
   } catch (error) {
-    // TODO: handle exceeded error
-    console.log(error)
+    // TODO: handle the error if service name is not found in service tracker
+    // or just remove this error from increment sender sent?
+
+    const filteredServices = services.filter(service => service.name !== chosenService.name); // remove the chosenservice
+    if (filteredServices.length === 0) {
+      handleAllProvidersAttempted(job); // TODO: a different error handler for this state
+    }
+    chosenService = selectService(filteredServices, job.data.attemptedProviders || {}); // update the chosen service
+    if (!chosenService) {
+      handleAllProvidersAttempted(job);
+    }
   }
 
   const transporter = createTransport(chosenService);
