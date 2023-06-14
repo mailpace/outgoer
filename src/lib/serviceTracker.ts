@@ -11,15 +11,15 @@ export async function incrementSenderSent(serviceName: string, client = redisCli
   const service = SERVICES.find((s) => s.name === serviceName);
 
   if (!service) {
-    throw new Error(`Service ${serviceName} not found in the configuration.`);
+    throw new ServiceNotFound(`Service Not Found: ${serviceName} not found in the configuration.`);
   }
 
   if (service.limit !== undefined) {
     const key = `sent_emails:${serviceName}`;
     const count = await client.incr(key);
     if (count > service.limit!) {
-      throw new Error(
-        `Service ${serviceName} has exceeded the limit of ${service.limit} emails.`,
+      throw new ServiceLimitExceeded(
+        `Service Limit Exceeded: ${serviceName} has exceeded the limit of ${service.limit} emails.`,
       );
     }
   } else {
@@ -33,4 +33,18 @@ export function getServices(): Array<{ name: string; limit?: number }> {
     name: service.name,
     limit: service.limit,
   }));
+}
+
+export class ServiceNotFound extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ServiceNotFound';
+  }
+}
+
+export class ServiceLimitExceeded extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ServiceLimitExceeded';
+  }
 }

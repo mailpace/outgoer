@@ -122,13 +122,53 @@ describe('processEmailJob', () => {
     expect(serviceTracker.incrementSenderSent).toHaveBeenCalled();
   });
 
-  it('should handle an increment that failed (i.e. its over the limit)', async () => {
-    const mockServiceTracker = serviceTracker as { incrementSenderSent };
+  it('should handle an increment that with a service not found error)', async () => {
+    const mockServiceTracker = serviceTracker as { incrementSenderSent, ServiceNotFound, ServiceLimitExceeded };
+    mockServiceTracker.ServiceNotFound = MockServiceNotFound;
+    mockServiceTracker.ServiceLimitExceeded = MockServiceLimitExceeded
     mockServiceTracker.incrementSenderSent = async (_serviceName: string, _client?) => {
-      throw new Error('it failed');
+      throw new mockServiceTracker.ServiceNotFound('it failed');
     };
+    // todo: check the rejects error message includes it failed
+    await expect(sender.processEmailJob(job)).rejects.toEqual({});
+  });
 
+  it('should handle an increment that went over its limit', async () => {
+    const mockServiceTracker = serviceTracker as { incrementSenderSent, ServiceNotFound, ServiceLimitExceeded };
+    mockServiceTracker.ServiceNotFound = MockServiceNotFound;
+    mockServiceTracker.ServiceLimitExceeded = MockServiceLimitExceeded
+    mockServiceTracker.incrementSenderSent = async (_serviceName: string, _client?) => {
+      throw new mockServiceTracker.ServiceLimitExceeded('it failed');
+    };
+    // todo: check the rejects error message includes it failed
+    await expect(sender.processEmailJob(job)).rejects.toEqual({});
+  });
+
+  it('should move to the next service when going over the limit', async () => {
+    // TODO: this test needs to be completed fully
+
+    const mockServiceTracker = serviceTracker as { incrementSenderSent, ServiceNotFound, ServiceLimitExceeded };
+    mockServiceTracker.ServiceNotFound = MockServiceNotFound;
+    mockServiceTracker.ServiceLimitExceeded = MockServiceLimitExceeded
+    mockServiceTracker.incrementSenderSent = async (_serviceName: string, _client?) => {
+      throw new mockServiceTracker.ServiceLimitExceeded('it failed');
+    };
     // todo: check the rejects error message includes it failed
     await expect(sender.processEmailJob(job)).rejects.toEqual({});
   });
 });
+
+
+class MockServiceNotFound extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ServiceNotFound';
+  }
+}
+
+class MockServiceLimitExceeded extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ServiceLimitExceeded';
+  }
+}

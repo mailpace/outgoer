@@ -60,7 +60,7 @@ describe('incrementSenderSent', () => {
 
     await expect(
       serviceTracker.incrementSenderSent(serviceName, mockRedisClient),
-    ).rejects.toThrow('Service service3 not found in the configuration.');
+    ).rejects.toThrow('Service Not Found: service3 not found in the configuration.');
   });
 
   it('should throw an error when a service exceeds the limit', async () => {
@@ -69,7 +69,7 @@ describe('incrementSenderSent', () => {
     await expect(
       serviceTracker.incrementSenderSent(serviceName, mockRedisClient),
     ).rejects.toThrow(
-      'Service service4 has exceeded the limit of 5 emails.',
+      'Service Limit Exceeded: service4 has exceeded the limit of 5 emails.',
     );
   });
 

@@ -9,7 +9,7 @@ import { EmailConfiguration } from '../interfaces/config.js';
 import selectService from '../lib/selectService.js';
 import convertEnvelope from '../lib/convertEnvelope.js';
 import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
-import { incrementSenderSent } from '../lib/serviceTracker.js';
+import { ServiceNotFound, incrementSenderSent } from '../lib/serviceTracker.js';
 
 const services = appConfig.services;
 type ServiceSettings = EmailConfiguration['services'][number];
@@ -53,16 +53,17 @@ export async function processEmailJob(job: Job<EmailJobData>) {
   try {
     await incrementSenderSent(chosenService.name);
   } catch (error) {
-    // TODO: handle the error if service name is not found in service tracker
-    // or just remove this error from increment sender sent?
-
-    const filteredServices = services.filter(service => service.name !== chosenService.name); // remove the chosenservice
-    if (filteredServices.length === 0) {
-      handleAllProvidersAttempted(job); // TODO: a different error handler for this state
-    }
-    chosenService = selectService(filteredServices, job.data.attemptedProviders || {}); // update the chosen service
-    if (!chosenService) {
-      handleAllProvidersAttempted(job);
+    if (error instanceof ServiceNotFound) {
+      handleJobFailed(job, error);
+    } else {
+      const filteredServices = services.filter(service => service.name !== chosenService.name); // remove the chosenservice
+      if (filteredServices.length === 0) {
+        handleAllProvidersAttempted(job); // TODO: a different error handler for this state
+      }
+      chosenService = selectService(filteredServices, job.data.attemptedProviders || {}); // update the chosen service
+      if (!chosenService) {
+        handleAllProvidersAttempted(job);
+      }
     }
   }
 
