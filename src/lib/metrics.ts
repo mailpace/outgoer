@@ -16,12 +16,10 @@ export function initializeMetrics() {
   });
 }
 
-// Function to increment the emails sent counter
 export function incrementEmailsSent(status = 'success') {
   emailsSentCounter.inc({ status });
 }
 
-// Function to get the metrics registry
 export function getMetricsRegistry(): Registry {
   return registry;
 }

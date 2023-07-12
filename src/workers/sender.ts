@@ -6,6 +6,7 @@ import { EmailJobData } from '../interfaces/email.js';
 import { emailStates } from '../interfaces/states.js';
 import { createTransport } from '../lib/transports/index.js';
 import { EmailConfiguration } from '../interfaces/config.js';
+import { incrementEmailsSent } from '../lib/metrics.js';
 import selectService from '../lib/selectService.js';
 import convertEnvelope from '../lib/convertEnvelope.js';
 import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
@@ -22,16 +23,16 @@ export default function startSenderWorker(): Worker<EmailJobData, any, string> {
   });
 
   worker.on('failed', handleJobFailed);
+  worker.on('completed', () => { incrementEmailsSent('success') });
+  // TODO: update metrics with gauge for active emails
+  
   return worker;
 }
 
 /**
  * Processes emails by selecting a service based on the priority index, and ignoring services which have already exceeded 5 attempts
- * It tracks the state by updating the job data
- * If all providers have exceeded 5 attempts the job fails
- * 
- * TODO: exponential back off
- * TODO: configurable per provider max attempts
+
+ * TODO: exponential / fibonacci / user provided back off
  * TODO: update metrics
  */
 export async function processEmailJob(job: Job<EmailJobData>) {
@@ -117,6 +118,7 @@ function handleNoServicesConfigured(job: Job<EmailJobData>) {
   job.data.errorResponse = errorString;
   job.data.state = emailStates.FAILED;
   job.update(job.data);
+  incrementEmailsSent('failed');
   throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }
 
@@ -126,6 +128,7 @@ function handleAllProvidersAttempted(job: Job<EmailJobData>) {
   job.data.errorResponse = errorString;
   job.data.state = emailStates.FAILED;
   job.update(job.data);
+  incrementEmailsSent('failed');
   throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }
 
@@ -142,5 +145,6 @@ export function handleJobFailed(job: Job<EmailJobData>, err: Error) {
   job.data.state = emailStates.FAILED;
   job.update(job.data);
   logger.error(`Unexpected sender job error. ${errorString}`);
+  incrementEmailsSent('failed');
   throw new UnrecoverableError(`Unrecoverable: ${errorString}`);
 }

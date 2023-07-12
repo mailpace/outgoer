@@ -4,6 +4,7 @@ import { EmailJobData } from '../../src/interfaces/email.js';
 import * as sender from '../../src/workers/sender.js';
 import { emailStates } from '../../src/interfaces/states.js';
 import * as serviceTracker from '../../src/lib/serviceTracker.js';
+import { initializeMetrics } from '../../src/lib/metrics.js';
 
 jest.mock('../../src/lib/transports/index.js', () => ({
   createTransport: jest.fn(() => ({
@@ -22,6 +23,10 @@ jest.mock('bullmq');
 
 describe('processEmailJob', () => {
   let job: Job<EmailJobData, any, string>;
+
+  beforeAll(() => {
+    initializeMetrics();
+  });
 
   beforeEach(() => {
     job = mock<Job>();
@@ -155,6 +160,10 @@ describe('processEmailJob', () => {
     };
     // todo: check the rejects error message includes it failed
     await expect(sender.processEmailJob(job)).rejects.toEqual({});
+  });
+
+  it('should increment metrics on completion', () => {
+    // TODO
   });
 });
 

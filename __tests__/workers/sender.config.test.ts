@@ -8,6 +8,7 @@ import { mock } from 'jest-mock-extended';
 import { EmailJobData } from '../../src/interfaces/email.js';
 import * as sender from '../../src/workers/sender.js';
 import { emailStates } from '../../src/interfaces/states.js';
+import { initializeMetrics } from '../../src/lib/metrics.js';
 
 jest.mock('../../src/lib/transports/index.js', () => ({
   createTransport: jest.fn(),
@@ -27,6 +28,10 @@ jest.mock('../../src/lib/serviceTracker.js', () => ({
 
 describe('processEmailJob', () => {
   let job: Job<EmailJobData, string, string>;
+
+  beforeAll(() => {
+    initializeMetrics();
+  });
 
   beforeEach(() => {
     job = mock<Job>();
