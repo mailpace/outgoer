@@ -11,7 +11,7 @@ jest.mock('../../config/test.json', () => ({
 
 describe('emailConfig', () => {
   it('should set the default email configuration options', () => {
-    expect(appConfig.outgoerSmtpServer.name).toEqual('smtp.outgoer')
+    expect(appConfig.outgoerSmtpServer.name).toEqual('Outgoer SMTP Server')
   });
   it('should override the default options if a JSON config file is available', () => {
     // expect(config.outgoerSmtpServer.port).toEqual(1000);

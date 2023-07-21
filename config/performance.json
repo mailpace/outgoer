@@ -1,0 +1,30 @@
+{
+    "outgoerSmtpServer": {
+      "name": "Outgoer Test Configuration for Performance Testing",
+      "serverHost": "localhost",
+      "port": 2525,
+      "secure": false,
+      "authMethods": [],
+      "authOptional": true,
+      "disabledCommands": ["STARTTLS"]
+    },
+    "customAuthPath": "../../../config/hooks/onAuth.js",
+    "services": [
+      {
+        "name": "mailhog",
+        "type": "smtp",
+        "priority": 0,
+        "limit": 100000,
+        "smtpSettings": {
+          "host": "localhost",
+          "port": 1025,
+          "secure": false,
+          "auth": {
+            "user": "your-email@gmail.com",
+            "pass": "your-email-password"
+          }
+        }
+      }
+    ]
+  }
+  

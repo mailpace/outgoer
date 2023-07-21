@@ -1,3 +1,5 @@
+import { SMTPServerOptions } from "smtp-server";
+
 /**
  * Configuration object for Outgoer settings
  */
@@ -19,7 +21,11 @@ export interface EmailConfiguration {
       | string
       | Buffer[]
       | string[] /** Certificate authority chain for SSL/TLS encryption */;
+
+    onAuth?: SMTPServerOptions["onAuth"];
   };
+
+  customAuthPath?: string;
 
   dashboard: {
     metricsPath: string /** Endpoint for grafana metrics */;

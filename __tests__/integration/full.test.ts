@@ -26,7 +26,7 @@ describe('Outgoer Integration Test', () => {
     // Wait for it to work
     await new Promise<void>((resolve) => {
       child.stdout.on('data', (data: any) => {
-        if (data.toString().includes(`listening on 127.0.0.1`)) {
+        if (data.toString().includes(`listening on `)) {
           resolve();
         }
       });
@@ -35,7 +35,7 @@ describe('Outgoer Integration Test', () => {
     // Create an instance of the SMTP server (the forwarding target)
     smtpServer = new SMTPServer({
       authOptional: true,
-      onData: jest.fn((_stream, _session, callback) => {
+      onData: jest.fn((_stream, _session, callback: () => any) => {
         callback();
       })
     });

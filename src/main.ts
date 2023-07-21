@@ -8,7 +8,7 @@ import { handleError } from './hooks/onError.js';
 import { initializeQueue } from './lib/emailQueue.js';
 import startSenderWorker from './workers/sender.js';
 
-logger.info("Launching Outgoer SMTP server and HTTP Endpoint...")
+logger.info(`Launching ${appConfig.outgoerSmtpServer.name} SMTP server and Dashboard...`)
 
 initializeQueue();
 initializeMetrics();

@@ -41,6 +41,7 @@
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "build:start": "tsc -p tsconfig.json && node build/src/main.js",
+    "build:start:performance": "npm run build:start & __tests__/performance/k6 __tests__/performance/basic.js",
     "lint": "eslint . --ext .ts --ext .mts",
     "lint:fix": "eslint . --ext .ts --ext .mts --fix",
     "test": "jest --coverage",
