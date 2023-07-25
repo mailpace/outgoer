@@ -1,7 +1,5 @@
 <h2 align="center">
-    <a href="https://outgoer.com" target="blank_">
-        <img height="100" alt="HTTPie" src="./outgoer-logo.png" />
-    </a>
+    <a href="https://outgoer.com" target="blank_"><img height="100" alt="Outgoer Logo" src="outgoer-logo.png" /></a>
     <br>
     <br>
     A modern SMTP proxy for sending outgoing emails.
