@@ -1,6 +1,14 @@
-<cute logo here>
+<h2 align="center">
+    <a href="https://outgoer.com" target="blank_">
+        <img height="100" alt="HTTPie" src="./outgoer-logo.png" />
+    </a>
+    <br>
+    <br>
+    A modern SMTP proxy for sending outgoing emails.
+</h2>
 
-Outgoer is a modern SMTP proxy for sending outgoing emails. It routes email from your apps to 3rd party email providers, helping to maximize delivery rates, centralize provider management, and simplify sending email.
+
+ Outgoer routes email from your apps to 3rd party email providers, helping to maximize delivery rates, centralize provider management, and simplify sending email.
 
 > _Redefine the art of sending emails with Outgoer. Break free from the limitations of traditional methods and embrace a new era of streamlined communication, where every email becomes a catalyst for success._  
 _\- <a href="chat.openai.com/">GPT 3.5</a>_
