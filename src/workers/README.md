@@ -4,8 +4,19 @@ TODO: move this to dedicated docs site
 
 Handles sending emails.
 
-## Flow:
+## Flow
 
-processEmailJob -> selectService (based on priority from application config and previous attempts to send this email) -> updateJobProviders (update the mq job with attempted provider and increment attempts for this email) -> incrementSenderSent (increase the amount sent for this sender globally) -> createTransport / sendEmail (create the sending service and send the email)
+```mermaid
+graph TD;
+    processEmailJob["processEmailJob"] --> selectService["selectService (based on priority and  attempts to send)"];
+    selectService --> updateJobProviders["updateJobProviders (update the job with attempted provider and increment attempts)"];
+    updateJobProviders --> incrementSenderSent["incrementSenderSent (increment sent for this sender globally)"];
+    incrementSenderSent --> createTransport;
+    createTransport --> sendEmail;
+```
 
 If any unhandled errors occur, the email send will retry via the MQ retry mechanism.
+
+# ResetCount.ts
+
+Resets the count of a service every month, based on the Application Config

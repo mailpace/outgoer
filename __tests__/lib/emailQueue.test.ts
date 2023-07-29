@@ -6,6 +6,7 @@ import {
 } from '../../src/lib/emailQueue.js';
 import { logger } from '../../src/lib/logger.js';
 import { SMTPServerEnvelope } from 'smtp-server';
+import emailConfig from '../../src/config/index.js';
 
 jest.mock('bullmq');
 jest.mock('../../src/lib/logger.js');
@@ -14,7 +15,7 @@ describe('Email Queue', () => {
   let emailQueue: Queue;
 
   beforeAll(() => {
-    emailQueue = initializeQueue();
+    emailQueue = initializeQueue(emailConfig);
   });
 
   afterEach(() => {

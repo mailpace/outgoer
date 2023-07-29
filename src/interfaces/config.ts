@@ -46,6 +46,7 @@ export interface EmailConfiguration {
       | 'library';
     priority: number /** Priority of the delivery mechanism */;
     limit?: number /** Maximum number of emails/month */;
+    limitResetDay?: number /** Day of the month the maximum emails is reset, defaults to 1 */
 
     smtpSettings?: {
       host: string /** Hostname or IP address of SMTP server */;
