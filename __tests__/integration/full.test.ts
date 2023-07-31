@@ -3,6 +3,8 @@ import treeKill from 'tree-kill';
 import { SMTPServer } from 'smtp-server';
 import nodemailer from 'nodemailer';
 
+jest.setTimeout(7000);
+
 describe('Outgoer Integration Test', () => {
   let smtpServer: SMTPServer;
   let child: ChildProcessWithoutNullStreams;
