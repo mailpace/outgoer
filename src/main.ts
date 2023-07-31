@@ -9,14 +9,18 @@ import { initializeQueue } from './lib/emailQueue.js';
 import startSenderWorker from './workers/sender.js';
 import scheduleResetSentJobs from './workers/reset.js';
 
-logger.info(`Launching ${appConfig.outgoerSmtpServer.name} SMTP server and Dashboard...`)
+export default function start() {
+    logger.info(`Launching ${appConfig.outgoerSmtpServer.name} SMTP server and Dashboard...`)
+    
+    initializeQueue(appConfig);
+    initializeMetrics();
+    startMetricsEndpoint();
+    startSenderWorker();
+    scheduleResetSentJobs(appConfig);
+    
+    const server = new SMTPServer(appConfig.outgoerSmtpServer);
+    server.on('error', handleError);
+    server.listen(appConfig.outgoerSmtpServer.port, appConfig.outgoerSmtpServer.serverHost);
+}
 
-initializeQueue(appConfig);
-initializeMetrics();
-startMetricsEndpoint();
-startSenderWorker();
-scheduleResetSentJobs(appConfig);
-
-export const server = new SMTPServer(appConfig.outgoerSmtpServer);
-server.on('error', handleError);
-server.listen(appConfig.outgoerSmtpServer.port, appConfig.outgoerSmtpServer.serverHost);
+start();

@@ -13,21 +13,21 @@ describe('build cron expression', () => {
   });
 
   it('should throw an error for invalid input', () => {
-    expect(() => buildCronExpression(0)).toThrowError(
+    expect(() => buildCronExpression(0)).toThrow(
       'Invalid service config. limitResetDay (day of the month) must be between 1 and 30.'
     );
-    expect(() => buildCronExpression(32)).toThrowError(
+    expect(() => buildCronExpression(32)).toThrow(
       'Invalid service config. limitResetDay (day of the month) must be between 1 and 30.'
     );
 
-    expect(() => buildCronExpression(-10)).toThrowError(
+    expect(() => buildCronExpression(-10)).toThrow(
       'Invalid service config. limitResetDay (day of the month) must be between 1 and 30.'
     );
   });
 
   it('should return valid cron expressions for months with 30 days', () => {
     expect(buildCronExpression(30)).toBe('30 * * * *'); // January, March, May, July, August, October, December
-    expect(() => buildCronExpression(31)).toThrowError(
+    expect(() => buildCronExpression(31)).toThrow(
       'Invalid service config. limitResetDay (day of the month) must be between 1 and 30.'
     ); // April, June, September, November
   });
@@ -95,7 +95,7 @@ describe('reset sent count', () => {
   it('should find the key and set it to zero', () => {
     job.data.serviceName = "test" 
     resetSentCount(job, redisOptions)
-    expect(mockSetRedis).toBeCalledTimes(1);
-    expect(mockSetRedis).toBeCalledWith(`sent_emails:${job.data.serviceName}`, 0)
+    expect(mockSetRedis).toHaveBeenCalledTimes(1);
+    expect(mockSetRedis).toHaveBeenCalledWith(`sent_emails:${job.data.serviceName}`, 0)
   });
 });
