@@ -52,6 +52,7 @@
   "author": "Paul Oms <paul@mailpace.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "@mailpace/mailpace.js": "^0.1.1",
     "bull-arena": "^3.30.4",
     "bullmq": "^3.12.0",
     "bunyan": "^1.8.15",

@@ -4,7 +4,7 @@ import { EmailConfiguration } from '../../src/interfaces/config.js';
 type ServiceSettings = EmailConfiguration['services'];
 
 const priorityTwo: EmailConfiguration['services'][number] = {
-  type: 'smtp',
+  provider: 'smtp',
   priority: 2,
   limit: 100,
   smtpSettings: {
@@ -19,13 +19,13 @@ const priorityTwo: EmailConfiguration['services'][number] = {
   name: 'Service 1',
 };
 const priorityThree: EmailConfiguration['services'][number] = {
-  type: 'library',
+  provider: 'mailpace',
   priority: 3,
   limit: 200,
   name: 'Service 2',
 };
 const priorityOne: EmailConfiguration['services'][number] = {
-  type: 'smtp',
+  provider: 'smtp',
   priority: 1,
   limit: 300,
   smtpSettings: {

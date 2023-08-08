@@ -1,12 +1,12 @@
-import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
 import { SMTPServerEnvelope } from 'smtp-server';
+import { SentMessage } from './transports.js';
 
 export interface EmailJobData {
   raw: string;
   envelope: SMTPServerEnvelope;
   state: string;
   attemptedProviders?: { [key: string]: AttemptedProvider };
-  response?: SMTPTransport.SentMessageInfo | void;
+  response?: SentMessage | void;
   errorResponse?: string;
 }
 

@@ -40,13 +40,13 @@ export interface EmailConfiguration {
    * Each object includes the host, port, secure, and auth fields.
    */
   services: {
-    name: string,
-    type: /** Whether this is vanilla SMTP server or 3rd party library */
-      | 'smtp'
-      | 'library';
+    name: string, /** Arbitrary name of service */
+    provider: string /** Must be one of the available supported services */
     priority: number /** Priority of the delivery mechanism */;
     limit?: number /** Maximum number of emails/month */;
     limitResetDay?: number /** Day of the month the maximum emails is reset, defaults to 1 */
+    username?: string /** Username from service provider */
+    api_key?: string /** API token from service provider */
 
     smtpSettings?: {
       host: string /** Hostname or IP address of SMTP server */;
@@ -57,7 +57,6 @@ export interface EmailConfiguration {
         pass: string /** Password for SMTP server authentication */;
       };
     };
-    // TODO: think the 3rd party providers through
   }[];
 
   redis: {

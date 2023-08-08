@@ -9,8 +9,8 @@ import { EmailConfiguration } from '../interfaces/config.js';
 import { incrementEmailsSent } from '../lib/metrics.js';
 import selectService from '../lib/selectService.js';
 import convertEnvelope from '../lib/convertEnvelope.js';
-import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
 import { ServiceNotFound, incrementSenderSent } from '../lib/serviceTracker.js';
+import { SentMessage, Transport } from '../interfaces/transports.js';
 
 const services = appConfig.services;
 type ServiceSettings = EmailConfiguration['services'][number];
@@ -66,12 +66,12 @@ export async function processEmailJob(job: Job<EmailJobData>) {
     }
   }
 
-  const transporter = createTransport(chosenService);
+  const transporter: Transport = createTransport(chosenService);
   const raw: string = job.data.raw;
-  const envelope = convertEnvelope(job.data.envelope);
+  const envelope = convertEnvelope(job.data.envelope); // TODO: FIX BCC ETC HERE / downstream?
 
   try {
-    const response: SMTPTransport.SentMessageInfo | void = await transporter.sendMail({ raw, envelope });
+    const response: SentMessage = await transporter.sendMail({ raw, envelope });
     job.data.response = response;
     job.data.state = emailStates.SENT;
     await job.update(job.data);

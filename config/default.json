@@ -17,7 +17,7 @@
   "services": [
     {
       "name": "smtp test 2",
-      "type": "smtp",
+      "provider": "smtp",
       "priority": 0,
       "limit": 10000,
       "smtpSettings": {

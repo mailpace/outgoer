@@ -68,7 +68,7 @@ describe('scheduleResetSentJobs', () => {
 
   it('should schedule reset jobs for services with limitResetDay set', async () => {
     emailConfig.services = [
-        { name: 'service1', limitResetDay: 10, type: 'smtp', priority: 1, }
+        { name: 'service1', limitResetDay: 10, provider: 'smtp', priority: 1, }
       ]
 
     scheduleResetSentJobs(emailConfig);
