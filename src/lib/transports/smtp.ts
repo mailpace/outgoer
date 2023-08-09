@@ -1,7 +1,7 @@
+import { Transporter, createTransport } from 'nodemailer';
+
 import { EmailConfiguration } from '../../interfaces/config.js';
 import { Transport, SentMessage, RawEmail } from '../../interfaces/transports.js';
-
-import { Transporter, createTransport } from 'nodemailer';
 
 type ServiceSettings = EmailConfiguration['services'][number]['smtpSettings'];
 
