@@ -6,14 +6,14 @@ import {
 import { Attachment } from '@mailpace/mailpace.js/build/main/lib/models/Attachment.js';
 import { Message } from '@mailpace/mailpace.js/build/main/lib/models/Message.js';
 
-import mailpace from '@mailpace/mailpace.js';
+import { DomainClient }  from '@mailpace/mailpace.js';
 import { ParsedMail, simpleParser } from 'mailparser';
 
 class MailPaceTransport implements Transport {
-  private client: mailpace.DomainClient;
+  private client: DomainClient;
 
   constructor(apiToken: string) {
-    this.client = new mailpace.DomainClient(apiToken);
+    this.client = new DomainClient(apiToken);
   }
 
   sendMail: (email: RawEmail) => Promise<SentMessage> = async (
