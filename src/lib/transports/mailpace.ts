@@ -7,7 +7,7 @@ import { Attachment } from '@mailpace/mailpace.js/build/main/lib/models/Attachme
 import { Message } from '@mailpace/mailpace.js/build/main/lib/models/Message.js';
 
 import { DomainClient }  from '@mailpace/mailpace.js';
-import { ParsedMail, simpleParser } from 'mailparser';
+import { HeaderValue, ParsedMail, simpleParser } from 'mailparser';
 
 class MailPaceTransport implements Transport {
   private client: DomainClient;
@@ -56,8 +56,7 @@ export function formatMessage(parsedEmail: ParsedMail) {
   );
 
   const tags: ReadonlyArray<string> | string = formatTags(
-    parsedEmail.headers.get('x-mailpace-tags') ||
-      parsedEmail.headers.get('x-oms-tags'),
+    parsedEmail.headers.get('x-mailpace-tags')
   );
 
   function get_list_unsubscribe(): string {
@@ -112,10 +111,12 @@ export function formatAttachments(attachments): ReadonlyArray<Attachment> {
 /**
  * Extract tags from headers and convert to MailPace API format
  */
-export function formatTags(tags): ReadonlyArray<string> | string {
-  if (tags) {
+export function formatTags(tags: HeaderValue): ReadonlyArray<string> {
+  if (Array.isArray(tags)) {
+    return tags.map(tag => tag.trim());
+  } else if (typeof tags === "string") {
     const split = tags.split(',');
-    return split.length > 1 ? split.map((x) => x.trim()) : split[0];
+    return split.map(tag => tag.trim());
   } else {
     return [];
   }

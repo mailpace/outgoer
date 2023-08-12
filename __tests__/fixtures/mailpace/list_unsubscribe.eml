@@ -1,0 +1,8 @@
+From: sender@example.com
+To: recipient@example.com
+Subject: Email with No Tags
+Date: Tue, 11 Aug 2023 10:00:00 +0000
+X-List-Unsubscribe: <http://www.host.com/list.cgi?cmd=unsub&lst=list>, <mailto:list-request@host.com?subject=unsubscribe>
+Content-Type: text/plain
+
+This is the body of the email.
