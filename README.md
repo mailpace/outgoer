@@ -3,7 +3,6 @@
     <a href="https://outgoer.com" target="blank_"><img alt="Outgoer Logo" src="outgoer-logo.png" /></a>
     <br>
     <br>
-    <br>
     A modern SMTP proxy for sending outgoing emails.
 </h2>
 <br>
