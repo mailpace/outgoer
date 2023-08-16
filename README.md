@@ -15,15 +15,20 @@
 _\- <a href="chat.openai.com/">GPT 3.5</a>_
 
 ![Build](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml/badge.svg)
+Test Cov badge here
+License Badge
+...
 
 ## Drop Outgoer into your stack to 
 
-- Scale and track sending email from multiple apps & containers
-- Speed up sending emails
-- Manage multiple transactional email providers
-- Reduce outbound spam from your network
-- Remove email client library dependencies from your app
-- Modify all emails coming out of your network
+- 📨 Manage multiple transactional email providers
+- 🔌 Handle SMTP provider outages
+- 📈 Scale and track sending email from multiple apps & containers
+- ⚡ Speed up sending
+- 🚀 Remove email client library dependencies from your apps
+- 🛡️ Reduce outbound spam from your network
+- 📥 Remove email client library dependencies from your apps
+- ✏️ Modify emails coming out of your network
 
 and more!
 
@@ -31,10 +36,10 @@ Outgoer is simple to setup, lives entirely inside your network, and speaks the s
 
 # How it works
 
-- Deploy Outgoer on your own network
-- Add your 3rd party SMTP and API credentials to Outgoer
-- Point your apps email SMTP at Outgoer
-- Outgoer does the rest!
+1. Deploy Outgoer on your own network
+2. Add your 3rd party SMTP and API credentials to Outgoer
+3. Point your Application emails at Outgoer's SMTP address
+4. Outgoer does the rest!
 
 # Requirements
 
