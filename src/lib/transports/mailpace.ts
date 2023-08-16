@@ -28,8 +28,7 @@ class MailPaceTransport implements Transport {
         response: message.status,
         responseCode: 200,
       };
-      // TODO: capture MailPace errors properly and handle them
-      // https://docs.mailpace.com/reference/responses
+      // TODO: handle 429 rate limiting errors, e.g. slow down retries
 
     } catch (error) {
       return {

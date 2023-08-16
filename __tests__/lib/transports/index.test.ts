@@ -51,6 +51,6 @@ describe('createTransport', () => {
       priority: 1,
       provider: 'unsupported',
     };
-    expect(() => createTransport(service)).toThrowError();
+    expect(() => createTransport(service)).toThrow();
   });
 });

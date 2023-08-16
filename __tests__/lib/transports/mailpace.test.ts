@@ -143,7 +143,7 @@ describe('formatMessage', () => {
       },
     };
     const message = formatMessage(mockParsedEmail);
-    expect(!('list_unsubscribe' in message));
+    expect('list_unsubscribe' in message).toBe(false);
   });
 
   it('converts attachments into oms format', async () => {
