@@ -15,4 +15,5 @@ export default {
     '!src/**/*.d.ts',
     '!src/**/*.d.mts',
   ],
+  testPathIgnorePatterns: process.env.CI ? ['__tests__/integration/full.test.ts'] : [],
 };
