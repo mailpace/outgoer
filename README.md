@@ -16,7 +16,7 @@ _\- <a href="chat.openai.com/">GPT 3.5</a>_
 [![Build](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml/badge.svg)](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml)
 [![codecov](https://codecov.io/gh/mailpace/outgoer/graph/badge.svg?token=YKRUO2GUPG)](https://codecov.io/gh/mailpace/outgoer)
 [![License](https://img.shields.io/github/license/mailpace/outgoer)](https://github.com/mailpace/outgoer/blob/main/LICENSE)
-...
+
 
 ## Drop Outgoer into your stack to 
 
