@@ -13,6 +13,8 @@
 > _Redefine the art of sending emails with Outgoer. Break free from the limitations of traditional methods and embrace a new era of streamlined communication, where every email becomes a catalyst for success._  
 _\- <a href="chat.openai.com/">GPT 3.5</a>_
 
+<br />
+
 [![Build](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml/badge.svg)](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml)
 [![codecov](https://codecov.io/gh/mailpace/outgoer/graph/badge.svg?token=YKRUO2GUPG)](https://codecov.io/gh/mailpace/outgoer)
 [![License](https://img.shields.io/github/license/mailpace/outgoer)](https://github.com/mailpace/outgoer/blob/main/LICENSE)
@@ -23,7 +25,7 @@ _\- <a href="chat.openai.com/">GPT 3.5</a>_
 - 📨 Manage multiple transactional email providers
 - 🔌 Handle SMTP provider outages
 - 📈 Scale and track sending email from multiple apps & containers
-- ⚡ Speed up sending
+- ⚡ Speed up sending emails
 - 🚀 Remove email client library dependencies from your apps
 - 🛡️ Reduce outbound spam from your network
 - 📥 Remove email client library dependencies from your apps
@@ -31,11 +33,11 @@ _\- <a href="chat.openai.com/">GPT 3.5</a>_
 
 and more!
 
-Outgoer is simple to setup, lives entirely inside your network, and speaks the same SMTP your apps use today.
+Outgoer is simple to setup, lives inside your network, and speaks the same SMTP your apps use today.
 
 # How it works
 
-1. Deploy Outgoer on your own network
+1. Deploy Outgoer on your network
 2. Add your 3rd party SMTP and API credentials to Outgoer
 3. Point your Application emails at Outgoer's SMTP address
 4. Outgoer does the rest!
