@@ -13,9 +13,9 @@
 > _Redefine the art of sending emails with Outgoer. Break free from the limitations of traditional methods and embrace a new era of streamlined communication, where every email becomes a catalyst for success._  
 _\- <a href="chat.openai.com/">GPT 3.5</a>_
 
-![Build](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml/badge.svg)
-Test Cov badge here
-License Badge
+[![Build](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml/badge.svg)](https://github.com/mailpace/outgoer/actions/workflows/nodejs.yml)
+[![codecov](https://codecov.io/gh/mailpace/outgoer/graph/badge.svg?token=YKRUO2GUPG)](https://codecov.io/gh/mailpace/outgoer)
+[![License](https://img.shields.io/github/license/mailpace/outgoer)](https://github.com/mailpace/outgoer/blob/main/LICENSE)
 ...
 
 ## Drop Outgoer into your stack to 
