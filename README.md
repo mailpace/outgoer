@@ -8,8 +8,7 @@
 <br>
 
  Outgoer routes email **from your apps to 3rd party email providers**, helping to maximize delivery rates, centralize provider management, and simplify sending email.
- 
- [!WARNING] Outgoer is currently pre-alpha. I.e. not all features are implemented and working yet. Feel free to test it at your own risk [!WARNING]
+
 
 > _Redefine the art of sending emails with Outgoer. Break free from the limitations of traditional methods and embrace a new era of streamlined communication, where every email becomes a catalyst for success._  
 _\- <a href="chat.openai.com/">GPT 3.5</a>_
@@ -20,6 +19,10 @@ _\- <a href="chat.openai.com/">GPT 3.5</a>_
 [![codecov](https://codecov.io/gh/mailpace/outgoer/graph/badge.svg?token=YKRUO2GUPG)](https://codecov.io/gh/mailpace/outgoer)
 [![License](https://img.shields.io/github/license/mailpace/outgoer)](https://github.com/mailpace/outgoer/blob/main/LICENSE)
 
+
+
+> :warning: **Warning**
+Outgoer is currently pre-alpha. I.e. not all features are implemented and working yet. Feel free to test it at your own risk
 
 ## Drop Outgoer into your stack to 
 
